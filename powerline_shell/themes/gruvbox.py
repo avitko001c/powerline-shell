@@ -21,11 +21,11 @@ light_gray = 244
 
 neutral_red    = 124
 neutral_green  = 106
+neutral_orange = 166
 neutral_yellow = 172
 neutral_blue   = 66
 neutral_purple = 132
 neutral_aqua   = 72
-neutral_orange = 166
 
 bright_red    = 167
 bright_green  = 142
@@ -95,17 +95,24 @@ class Color(DefaultColor):
     GIT_CONFLICTED_FG = light0
     GIT_STASH_BG = neutral_yellow
     GIT_STASH_FG = dark0
+    GIT_URL_BG = faded_red
+    GIT_URL_FG = light0
 
     VIRTUAL_ENV_BG = faded_green
     VIRTUAL_ENV_FG = light0
 
     BATTERY_NORMAL_BG = neutral_green
     BATTERY_NORMAL_FG = dark2
+    BATTERY_WARN_FG = neutral_orange
+    BATTERY_WARN_BG = light0
     BATTERY_LOW_BG = neutral_red
     BATTERY_LOW_FG = light1
 
     AWS_PROFILE_FG = neutral_aqua
     AWS_PROFILE_BG = dark1
+
+    AWS_REGION_FG = neutral_yellow
+    AWS_REGION_BG = dark1
 
     TIME_FG = light2
     TIME_BG = dark4

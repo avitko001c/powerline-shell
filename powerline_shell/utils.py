@@ -1,6 +1,7 @@
 import sys
 import os
 import threading
+from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
 
 py3 = sys.version_info[0] == 3
 
@@ -8,7 +9,7 @@ if py3:
     def unicode_(x):
         return str(x)
     def decode(x):
-        return x.decode("utf-8")
+        return x.decode(get_preferred_output_encoding())
 else:
     unicode_ = unicode
     decode = unicode
@@ -28,7 +29,8 @@ class RepoStats(object):
         'hg': u'\u263F',
         'bzr': u'\u2B61\u20DF',
         'fossil': u'\u2332',
-        'svn': u'\u2446'
+        'svn': u'\u2446',
+        'url': u'●'
     }
 
     def __init__(self, ahead=0, behind=0, new=0, changed=0, staged=0, conflicted=0):

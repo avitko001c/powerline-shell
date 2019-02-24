@@ -1,4 +1,5 @@
 import re
+import os
 import subprocess
 from powerline_shell.utils import RepoStats, ThreadedSegment, get_git_subprocess_env
 from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding

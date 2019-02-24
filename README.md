@@ -93,10 +93,16 @@ install for just your user, if you'd like. But you may need to fiddle with your
 ```
 git clone https://github.com/b-ryan/powerline-shell
 cd powerline-shell
-python setup.py install
+python setup.py install --record uninstall.txt
 ```
 
 - Setup your shell prompt using the instructions for your shell below.
+
+- To uninstall, run:
+
+```
+cat uninstall.txt | xargs rm -rf
+```
 
 ### Bash
 
@@ -231,6 +237,41 @@ For example, your config could look like this:
   ]
 }
 ```
+=======
+are:
+
+- `aws_profile` - Show which AWS profile is in use. See the
+  [AWS](http://docs.aws.amazon.com/cli/latest/userguide/cli-multiple-profiles.html)
+  documentation.
+- `battery` - See percentage of battery charged and an icon when the battery is
+  charging.
+- `bzr` - Details about the current Bazaar repo.
+- `cwd` - Shows your current working directory. See [Segment
+  Configuration](#segment-configuration) for some options.
+- `exit_code` - When the previous command ends in a non-zero status, shows the
+  value of the exit status in red.
+- `fossil` - Details about the current Fossil repo.
+- `git` - Details about the current Git repo.
+- `hg` - Details about the current Mercurial repo.
+- `hostname` - Current machine's hostname.
+- `jobs` - Number of background jobs currently running.
+- `newline` - Inserts a newline into the prompt.
+- `node_version` - `node --version`
+- `npm_version` - `npm --version`
+- `php_version` - Version of php on the machine.
+- `rbenv` - `rbenv local`
+- `read_only` - Shows a lock icon if the current directory is read-only.
+- `root` - Shows a `#` if logged in as root, `$` otherwise.
+- `ruby_version` - `ruby --version`
+- `set_term_title` - If able, sets the title of your terminal to include some
+  useful info.
+- `ssh` - If logged into over SSH, shows a network icon.
+- `svn` - Details about the current SVN repo.
+- `time` - Shows the current time.
+- `uptime` - Uptime of the current machine.
+- `username` - Name of the logged-in user.
+- `virtual_env` - Shows the name of the current virtual env or conda env.
+- `asciinema` - An indicador to warn that [asciinema](https://asciinema.org/) is recording.
 
 ### Segment Separator
 

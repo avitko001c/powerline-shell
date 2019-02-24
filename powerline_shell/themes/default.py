@@ -75,6 +75,8 @@ class DefaultColor(object):
     TIME_FG = 250
     TIME_BG = 238
 
+    ASCIINEMA_BG = 254
+    ASCIINEMA_FG = 124
 
 class Color(DefaultColor):
     """

@@ -48,7 +48,7 @@ def set_logger(loglevel, logname):
     if loglevel.lower() == "error":
         level = logging.ERROR
     stdout = logging.StreamHandler(sys.stdout)
-    stdout.setLevel(levelset)
+    stdout.setLevel(level)
     stdout.setFormatter(formatter)
 
     logger = logging.Logger(logname)
@@ -296,7 +296,7 @@ def main():
     if args.loglevel:
         eventlog = set_logger(args.loglevel, 'powerline-shell')
     elif not args.loglevel:
-	eventlog = set_logger('info', 'powerline-shell')
+        eventlog = set_logger('info', 'powerline-shell')
 
     if args.generate_config:
         eventlog.info(json.dumps(DEFAULT_CONFIG, indent=2))

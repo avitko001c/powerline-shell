@@ -57,6 +57,8 @@ class DefaultColor(object):
     GIT_UNTRACKED_FG = 15
     GIT_CONFLICTED_BG = 9
     GIT_CONFLICTED_FG = 15
+    GIT_URL_BG = 9
+    GIT_URL_FG = 15
 
     GIT_STASH_BG = 221
     GIT_STASH_FG = 0
@@ -66,11 +68,18 @@ class DefaultColor(object):
 
     BATTERY_NORMAL_BG = 22
     BATTERY_NORMAL_FG = 7
+    BATTERY_WARN_FG = 166  # medium orange
+    BATTERY_WARN_BG = 254
     BATTERY_LOW_BG = 196
     BATTERY_LOW_FG = 7
 
     AWS_PROFILE_FG = 39
     AWS_PROFILE_BG = 238
+
+    AWS_REGION_FG = 35
+    AWS_REGION_BG = 00
+
+
 
     TIME_FG = 250
     TIME_BG = 238

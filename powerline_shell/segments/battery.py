@@ -30,10 +30,7 @@ class Segment(BasicSegment):
         elif which('pmset'):
             BATTERY_PERCENT_RE = re.compile(r'(\d+)%')
             battery_summary = subprocess.check_output(['pmset', '-g', 'batt']).decode(get_preferred_output_encoding())
-            #battery_cmd = subprocess.Popen(['pmset', '-g', 'batt'], stdout=subprocess.PIPE)
-            #battery_summary = battery_cmd.communicate()[0].decode(get_preferred_output_encoding()).rstrip()
             cap = int(BATTERY_PERCENT_RE.search(battery_summary).group(1))
-            #cap = "".join([battery_percent,"%"])
             if 'AC' in battery_summary:
                 status = "AC"
             elif 'Battery Power' in battery_summary:

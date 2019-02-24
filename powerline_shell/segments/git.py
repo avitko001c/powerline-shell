@@ -11,7 +11,7 @@ def parse_git_branch_info(status):
 
 
 def _get_git_detached_branch():
-    detached_ref = subprocess.check_output(['git', 'describe', '--tags', '--always'], env=get_git_subprocess_env()).decode('utf-8').rstrip('\n')
+    detached_ref = subprocess.check_output(['git', 'describe', '--tags', '--always'], env=get_git_subprocess_env()).decode(get_preferred_output_encoding()).rstrip('\n')
     #detached_ref = p.communicate()[0].decode(get_preferred_output_encoding()).rstrip('\n')
     if p.returncode == 0:
         branch = u'{} {}'.format(RepoStats.symbols['detached'], detached_ref)

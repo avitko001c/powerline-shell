@@ -1,5 +1,5 @@
 import subprocess
-from ..utils import BasicSegment
+from powerline_shell.utils import BasicSegment
 
 
 class Segment(BasicSegment):

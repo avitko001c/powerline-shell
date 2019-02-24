@@ -1,6 +1,6 @@
 import os
 import subprocess
-from ..utils import RepoStats, ThreadedSegment, get_subprocess_env
+from powerline_shell.utils import RepoStats, ThreadedSegment, get_subprocess_env
 
 
 def _get_fossil_branch():

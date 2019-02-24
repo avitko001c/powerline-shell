@@ -1,5 +1,5 @@
 import subprocess
-from ..utils import ThreadedSegment, decode
+from powerline_shell.utils import ThreadedSegment, decode
 
 
 class Segment(ThreadedSegment):

@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from ..utils import BasicSegment
+from powerline_shell.utils import BasicSegment
 import time
 
 

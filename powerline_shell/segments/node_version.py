@@ -1,12 +1,11 @@
 import subprocess
-from ..utils import ThreadedSegment
+from powerline_shell.utils import ThreadedSegment
 
 
 class Segment(ThreadedSegment):
     def run(self):
         try:
-            p1 = subprocess.Popen(["node", "--version"], stdout=subprocess.PIPE)
-            self.version = p1.communicate()[0].decode("utf-8").rstrip()
+            self.version = subprocess.check_output(['node', '--version']).decode('utf-8').rstrip()
         except OSError:
             self.version = None
 

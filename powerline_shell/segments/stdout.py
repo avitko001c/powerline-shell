@@ -1,5 +1,5 @@
 import subprocess
-from ..utils import ThreadedSegment
+from powerline_shell.utils import ThreadedSegment
 
 
 class Segment(ThreadedSegment):

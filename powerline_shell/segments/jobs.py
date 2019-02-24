@@ -2,7 +2,7 @@ import os
 import re
 import subprocess
 import platform
-from ..utils import ThreadedSegment
+from powerline_shell.utils import ThreadedSegment
 
 
 class Segment(ThreadedSegment):

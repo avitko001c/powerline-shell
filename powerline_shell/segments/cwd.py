@@ -1,6 +1,6 @@
 import os
 import sys
-from ..utils import warn, py3, BasicSegment
+from powerline_shell.utils import warn, py3, BasicSegment
 
 ELLIPSIS = u'\u2026'
 

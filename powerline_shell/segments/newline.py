@@ -1,4 +1,4 @@
-from ..utils import BasicSegment, warn
+from powerline_shell.utils import BasicSegment, warn
 
 
 class Segment(BasicSegment):

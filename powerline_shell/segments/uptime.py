@@ -1,6 +1,6 @@
 import subprocess
 import re
-from ..utils import BasicSegment, decode
+from powerline_shell.utils import BasicSegment, decode
 
 
 class Segment(BasicSegment):

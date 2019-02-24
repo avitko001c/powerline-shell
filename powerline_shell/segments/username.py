@@ -1,4 +1,4 @@
-from ..utils import BasicSegment
+from powerline_shell.utils import BasicSegment
 import os
 import getpass
 

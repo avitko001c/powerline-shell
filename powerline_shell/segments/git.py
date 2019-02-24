@@ -1,6 +1,6 @@
 import re
 import subprocess
-from ..utils import RepoStats, ThreadedSegment, get_git_subprocess_env
+from powerline_shell.utils import RepoStats, ThreadedSegment, get_git_subprocess_env
 
 
 def parse_git_branch_info(status):
@@ -9,10 +9,8 @@ def parse_git_branch_info(status):
 
 
 def _get_git_detached_branch():
-    p = subprocess.Popen(['git', 'describe', '--tags', '--always'],
-                         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                         env=get_git_subprocess_env())
-    detached_ref = p.communicate()[0].decode("utf-8").rstrip('\n')
+    detached_ref = subprocess.check_output(['git', 'describe', '--tags', '--always'], env=get_git_subprocess_env()).decode('utf-8').rstrip('\n')
+    #detached_ref = p.communicate()[0].decode("utf-8").rstrip('\n')
     if p.returncode == 0:
         branch = u'{} {}'.format(RepoStats.symbols['detached'], detached_ref)
     else:

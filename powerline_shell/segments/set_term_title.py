@@ -1,6 +1,6 @@
 import os
 import socket
-from ..utils import BasicSegment
+from powerline_shell.utils import BasicSegment
 
 
 class Segment(BasicSegment):

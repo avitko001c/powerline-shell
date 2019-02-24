@@ -1,5 +1,5 @@
 import subprocess
-from ..utils import ThreadedSegment, RepoStats, get_subprocess_env
+from powerline_shell.utils import ThreadedSegment, RepoStats, get_subprocess_env
 
 
 def _get_svn_revision():

@@ -1,6 +1,6 @@
 import os
 import subprocess
-from ..utils import BasicSegment
+from powerline_shell.utils import BasicSegment
 
 
 class Segment(BasicSegment):
@@ -9,8 +9,7 @@ class Segment(BasicSegment):
 
         try:
             p1 = subprocess.Popen(['ruby', '-v'], stdout=subprocess.PIPE)
-            p2 = subprocess.Popen(['sed', "s/ (.*//"], stdin=p1.stdout, stdout=subprocess.PIPE)
-            ruby_and_gemset = p2.communicate()[0].decode('utf-8').rstrip()
+            ruby_and_gemset = subprocess.check_output(['sed', "s/ (.*//"], stdin=p1.stdout).decode('utf-8').rstrip()
 
             gem_set = os.environ.get('GEM_HOME', '@').split('@')
 

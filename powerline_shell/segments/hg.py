@@ -1,5 +1,6 @@
 import subprocess
 from powerline_shell.utils import RepoStats, ThreadedSegment, get_subprocess_env
+from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
 
 
 def _get_hg_branch():
@@ -7,7 +8,7 @@ def _get_hg_branch():
                          stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE,
                          env=get_subprocess_env())
-    branch = p.communicate()[0].decode("utf-8").rstrip('\n')
+    branch = p.communicate()[0].decode(get_preferred_output_encoding()).rstrip('\n')
     return branch
 
 
@@ -26,10 +27,18 @@ def parse_hg_stats(status):
 def _get_hg_status(output):
     """This function exists to enable mocking the `hg status` output in tests.
     """
-    return output[0].decode("utf-8").splitlines()
+    return output[0].decode(get_preferred_output_encoding()).splitlines()
 
 
 def build_stats():
+    # Check to see if we are in a git directory
+    path = '/'
+    for p in os.getenv("PWD").split('/'):
+        path += p + '/'
+        if os.path.isdir(path+'.git'):
+            break
+        else:
+            return None, None
     try:
         p = subprocess.Popen(["hg", "status"],
                              stdout=subprocess.PIPE,

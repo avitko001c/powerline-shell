@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-import argparse
 import os
 import sys
-import importlib
 import json
-from .utils import warn, py3, import_file
+import logging
+import argparse
+import importlib
+from powerline_shell.utils import warn, py3, import_file
+from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
 import re
 
 
@@ -26,6 +28,35 @@ def _current_dir():
         return os.getcwd()
     return os.getenv("PWD") or os.getcwd()
 
+
+def set_logger(loglevel, logname):
+    log_format = '%(asctime)s:%(levelname)s:%(message)s'
+    formatter = logging.Formatter(log_format)
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+
+    if loglevel.lower() == "warning":
+        level = logging.WARNING
+    if loglevel.lower() == "critical":
+        level = logging.CRITICAL
+    if loglevel.lower() == "exception":
+        level = logging.EXCEPTION
+    if loglevel.lower() == "info":
+        level = logging.INFO
+    if loglevel.lower() == "debug":
+        level = logging.DEBUG
+    if loglevel.lower() == "error":
+        level = logging.ERROR
+    stdout = logging.StreamHandler(sys.stdout)
+    stdout.setLevel(levelset)
+    stdout.setFormatter(formatter)
+
+    logger = logging.Logger(logname)
+    logger.setLevel(level)
+    logger.addHandler(stdout)
+    logger.addHandler(console)
+    eventlog = EventLogger(logger, "battery")
+    return(eventlog)
 
 def get_valid_cwd():
     """Determine and check the current working directory for validity.
@@ -53,6 +84,64 @@ def get_valid_cwd():
              + up)
     return cwd
 
+class EventLogger(object):
+        '''Proxy class for logging.Logger instance
+
+        It emits messages in format ``{ext}:{prefix}:{message}`` where
+
+        ``{ext}``
+                is an EventLogger extension (e.g. “vim”, “shell”, “python”).
+        ``{prefix}``
+                is a local prefix, usually a segment name.
+        ``{message}``
+                is the original message passed to one of the logging methods.
+
+        Each of the methods (``critical``, ``exception``, ``info``, ``error``,
+        ``warn``, ``debug``) expects to receive message in an ``str.format`` format,
+        not in printf-like format.
+
+        Log is saved to the location :ref:`specified by user <config-common-log>`.
+        '''
+
+        def __init__(self, logger, ext):
+                self.logger = logger
+                self.ext = ext
+                self.prefix = ''
+                self.last_msgs = {}
+
+        def _log(self, attr, msg, *args, **kwargs):
+                prefix = kwargs.get('prefix') or self.prefix
+                prefix = self.ext + ((':' + prefix) if prefix else '')
+                msg = safe_unicode(msg)
+                if args or kwargs:
+                        args = [safe_unicode(s) if isinstance(s, bytes) else s for s in args]
+                        kwargs = dict((
+                                (k, safe_unicode(v) if isinstance(v, bytes) else v)
+                                for k, v in kwargs.items()
+                        ))
+                        msg = msg.format(*args, **kwargs)
+                msg = prefix + ':' + msg
+                key = attr + ':' + prefix
+                if msg != self.last_msgs.get(key):
+                        getattr(self.logger, attr)(msg)
+                        self.last_msgs[key] = msg
+        def critical(self, msg, *args, **kwargs):
+                self._log('critical', msg, *args, **kwargs)
+
+        def exception(self, msg, *args, **kwargs):
+                self._log('exception', msg, *args, **kwargs)
+
+        def info(self, msg, *args, **kwargs):
+                self._log('info', msg, *args, **kwargs)
+
+        def error(self, msg, *args, **kwargs):
+                self._log('error', msg, *args, **kwargs)
+
+        def warn(self, msg, *args, **kwargs):
+                self._log('warning', msg, *args, **kwargs)
+
+        def debug(self, msg, *args, **kwargs):
+                self._log('debug', msg, *args, **kwargs)
 
 class Powerline(object):
     symbols = {
@@ -127,7 +216,7 @@ class Powerline(object):
         if py3:
             return text
         else:
-            return text.encode('utf-8')
+            return text.encode(get_preferred_output_encoding())
 
     def draw_segment(self, idx):
         segment = self.segments[idx]
@@ -196,15 +285,30 @@ def main():
     arg_parser.add_argument('--shell', action='store', default='bash',
                             help='Set this to your shell type',
                             choices=['bash', 'tcsh', 'zsh', 'bare'])
+    arg_parser.add_argument('--config', '-c', action='store',
+                            help='Configuration file to load')
+    arg_parser.add_argument('--loglevel', '-l', action='store',
+                            help='set the loglevel you want: Default info')
     arg_parser.add_argument('prev_error', nargs='?', type=int, default=0,
                             help='Error code returned by the last command')
     args = arg_parser.parse_args()
 
+    if args.loglevel:
+        eventlog = set_logger(args.loglevel, 'powerline-shell')
+    elif not args.loglevel:
+	eventlog = set_logger('info', 'powerline-shell')
+
     if args.generate_config:
-        print(json.dumps(DEFAULT_CONFIG, indent=2))
+        eventlog.info(json.dumps(DEFAULT_CONFIG, indent=2))
         return 0
 
-    config_path = find_config()
+    if args.config and not os.path.exists(os.path.expanduser(args.config)):
+        eventlog.info('Cannot find config file using default config file: {0}', args.config)
+        config_path = find_config()
+    elif args.config and os.path.exists(os.path.expanduser(args.config)):
+        config_path = args.config
+    else:
+        config_path = find_config()
     if config_path:
         with open(config_path) as f:
             try:

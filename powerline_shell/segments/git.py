@@ -1,6 +1,7 @@
 import re
 import subprocess
 from powerline_shell.utils import RepoStats, ThreadedSegment, get_git_subprocess_env
+from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
 
 
 def parse_git_branch_info(status):
@@ -10,7 +11,7 @@ def parse_git_branch_info(status):
 
 def _get_git_detached_branch():
     detached_ref = subprocess.check_output(['git', 'describe', '--tags', '--always'], env=get_git_subprocess_env()).decode('utf-8').rstrip('\n')
-    #detached_ref = p.communicate()[0].decode("utf-8").rstrip('\n')
+    #detached_ref = p.communicate()[0].decode(get_preferred_output_encoding()).rstrip('\n')
     if p.returncode == 0:
         branch = u'{} {}'.format(RepoStats.symbols['detached'], detached_ref)
     else:
@@ -36,6 +37,14 @@ def parse_git_stats(status):
 
 
 def build_stats():
+    # Check to see if we are in a git directory
+    path = '/'
+    for p in os.getenv("PWD").split('/'):
+        path += p + '/'
+        if os.path.isdir(path+'.git'):
+            break
+        else:
+            return None, None
     try:
         p = subprocess.Popen(['git', 'status', '--porcelain', '-b'],
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -48,7 +57,7 @@ def build_stats():
     if p.returncode != 0:
         return (None, None)
 
-    status = pdata[0].decode("utf-8").splitlines()
+    status = pdata[0].decode(get_preferred_output_encoding()).splitlines()
     stats = parse_git_stats(status)
     branch_info = parse_git_branch_info(status)
 

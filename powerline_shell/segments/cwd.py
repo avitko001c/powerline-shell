@@ -1,6 +1,7 @@
 import os
 import sys
 from powerline_shell.utils import warn, py3, BasicSegment
+from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
 
 ELLIPSIS = u'\u2026'
 
@@ -55,7 +56,7 @@ def get_fg_bg(powerline, name, is_last_dir):
 def add_cwd_segment(powerline):
     cwd = powerline.cwd
     if not py3:
-        cwd = cwd.decode("utf-8")
+        cwd = cwd.decode(get_preferred_output_encoding())
     cwd = replace_home_dir(cwd)
 
     names = split_path_into_names(cwd)

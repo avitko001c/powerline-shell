@@ -1,5 +1,6 @@
 import subprocess
 from powerline_shell.utils import ThreadedSegment, RepoStats, get_subprocess_env
+from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
 
 
 def _get_svn_revision():
@@ -7,7 +8,7 @@ def _get_svn_revision():
                          stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE,
                          env=get_subprocess_env())
-    for line in p.communicate()[0].decode("utf-8").splitlines():
+    for line in p.communicate()[0].decode(get_preferred_output_encoding()).splitlines():
         if "revision" in line:
             revision = line.split("=")[1].split('"')[1]
             break
@@ -29,7 +30,7 @@ def parse_svn_stats(status):
 def _get_svn_status(output):
     """This function exists to enable mocking the `svn status` output in tests.
     """
-    return output[0].decode("utf-8").splitlines()
+    return output[0].decode(get_preferred_output_encoding()).splitlines()
 
 
 def build_stats():

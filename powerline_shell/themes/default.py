@@ -81,6 +81,9 @@ class DefaultColor(object):
 
 
 
+    KUBECONFIG_PATH_FG = 39
+    KUBECONFIG_PATH_BG = 238
+
     TIME_FG = 250
     TIME_BG = 238
 

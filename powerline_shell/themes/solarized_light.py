@@ -42,3 +42,7 @@ class Color(DefaultColor):
 
     ASCIINEMA_BG = 15
     ASCIINEMA_FG = 1
+
+    PRIVATE_IP_FG = 15
+    PRIVATE_IP_BG = 4
+    PRIVATE_IP_OFFLINE = 124

@@ -74,10 +74,10 @@ class DefaultColor(object):
     BATTERY_LOW_FG = 7
 
     AWS_PROFILE_FG = 39
-    AWS_PROFILE_BG = 238
+    AWS_PROFILE_BG = 237
 
     AWS_REGION_FG = 35
-    AWS_REGION_BG = 00
+    AWS_REGION_BG = 237
 
 
 
@@ -86,6 +86,12 @@ class DefaultColor(object):
 
     ASCIINEMA_BG = 254
     ASCIINEMA_FG = 124
+
+    RUBY_VERSION_FG = 15
+    RUBY_VERSION_BG = 9
+
+    PYTHON_VERSION_FG = 15
+    PYTHON_VERSION_BG = 237
 
 class Color(DefaultColor):
     """

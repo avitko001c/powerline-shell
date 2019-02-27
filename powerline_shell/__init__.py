@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import print_function
+import re
 import os
 import sys
 import json
@@ -9,7 +10,6 @@ import argparse
 import importlib
 from powerline_shell.utils import warn, py3, import_file
 from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
-import re
 
 
 def _current_dir():

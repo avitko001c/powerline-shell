@@ -7,6 +7,7 @@ except ImportError:
 import sys
 from .colortrans import *
 from .utils import py3
+from .encoding import get_preferred_output_encoding, get_preferred_input_encoding
 
 
 def getOppositeColor(r,g,b):
@@ -28,7 +29,7 @@ def getOppositeColor(r,g,b):
 
 def stringToHashToColorAndOpposite(string):
     if py3:
-        string = string.encode('utf-8')
+        string = string.encode(get_preferred_output_encoding())
     string = md5(string).hexdigest()[:6] # get a random color
     color1 = rgbstring2tuple(string)
     color2 = getOppositeColor(*color1)

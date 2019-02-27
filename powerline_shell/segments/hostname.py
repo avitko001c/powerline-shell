@@ -1,6 +1,6 @@
 from powerline_shell.utils import BasicSegment
-from ..color_compliment import stringToHashToColorAndOpposite
-from ..colortrans import rgb2short
+from powerline_shell.color_compliment import stringToHashToColorAndOpposite
+from powerline_shell.colortrans import rgb2short
 from socket import gethostname
 
 

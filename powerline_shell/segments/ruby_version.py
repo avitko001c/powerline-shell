@@ -6,6 +6,8 @@ from powerline_shell.encoding import get_preferred_output_encoding, get_preferre
 
 class Segment(BasicSegment):
     def add_to_powerline(self):
+        bg = self.powerline.theme.RUBY_VERSION_BG
+        fg = self.powerline.theme.RUBY_VERSION_FG
         powerline = self.powerline
 
         try:
@@ -17,6 +19,6 @@ class Segment(BasicSegment):
             if len(gem_set) > 1:
                 ruby_and_gemset += "@{}".format(gem_set.pop())
 
-            powerline.append(ruby_and_gemset, 15, 124)
+            powerline.append(ruby_and_gemset, fg, bg)
         except OSError:
             return

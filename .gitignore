@@ -11,3 +11,4 @@ powerline-shell.json
 uninstall.txt
 .DS_Store
 *sublime*
+.pytest_cache

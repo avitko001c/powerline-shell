@@ -7,8 +7,8 @@ class Segment(BasicSegment):
     def add_to_powerline(self):
         powerline = self.powerline
         try:
-            p1 = subprocess.Popen(["rbenv", "local"], stdout=subprocess.PIPE)
-            version = p1.communicate()[0].decode(get_preferred_output_encoding()).rstrip()
+            version = subprocess.check_output(["rbenv", "local"]).decode(get_preferred_output_encoding()).rstrip()
+            #version = p1.communicate()[0].decode(get_preferred_output_encoding()).rstrip()
             if len(version) <= 0:
                     return
             powerline.append(' %s ' % version,

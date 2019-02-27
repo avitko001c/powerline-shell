@@ -1,6 +1,5 @@
 from powerline_shell.utils import BasicSegment
 
-
 class Segment(BasicSegment):
     def add_to_powerline(self):
         if self.powerline.args.prev_error == 0:

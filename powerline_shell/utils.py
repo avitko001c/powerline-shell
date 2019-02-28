@@ -3,7 +3,6 @@
 import sys
 import os
 import threading
-from powerline_shell import set_logging
 from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
 
 py3 = sys.version_info[0] == 3
@@ -95,7 +94,6 @@ class RepoStats(object):
 
 
 def warn(msg):
-    eventlog = set_logging('info', 'powerline-shell')
     eventlog.info('[powerline-shell] {0}', msg)
 
 

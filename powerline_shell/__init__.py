@@ -55,7 +55,7 @@ def set_logger(loglevel, logname):
     logger.setLevel(level)
     logger.addHandler(stdout)
     logger.addHandler(console)
-    eventlog = EventLogger(logger, "battery")
+    eventlog = EventLogger(logger, logname)
     return(eventlog)
 
 def get_valid_cwd():

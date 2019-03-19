@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="powerline-shell",
-    version="0.7.2-Vitko",
+    version="0.7.3-vitko",
     description="A pretty prompt for your shell",
     author="Buck Ryan",
     author_email="buck@buckryan.com",

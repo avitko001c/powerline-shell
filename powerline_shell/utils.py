@@ -2,8 +2,10 @@
 
 import sys
 import os
+import logging
 import threading
 from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
+from powerline_shell.unicode import safe_unicode
 
 py3 = sys.version_info[0] == 3
 
@@ -16,7 +18,6 @@ else:
     unicode_ = unicode
     decode = unicode
 
-
 class RepoStats(object):
     symbols = {
         'detached': u'\u2693',
@@ -24,10 +25,10 @@ class RepoStats(object):
         'behind': u'\u2B07',
         'staged': u'\u2714',
         'changed': u'\u270E',
-        'new': u'?',
+        'new': u'',
         'conflicted': u'\u273C',
         'stash': u'\u2398',
-        'git': u'\uE0A0',
+        'git': u'',
         'hg': u'\u263F',
         'bzr': u'\u2B61\u20DF',
         'fossil': u'\u2332',
@@ -42,6 +43,8 @@ class RepoStats(object):
         self.changed = changed
         self.staged = staged
         self.conflicted = conflicted
+        symbols = self.symbols
+        print(symbols)
 
     def __eq__(self, other):
         return (
@@ -92,10 +95,96 @@ class RepoStats(object):
         add('new', color.GIT_UNTRACKED_FG, color.GIT_UNTRACKED_BG)
         add('conflicted', color.GIT_CONFLICTED_FG, color.GIT_CONFLICTED_BG)
 
+def set_logger(loglevel, logname):
+    log_format = '%(asctime)s:%(levelname)s:%(message)s'
+    formatter = logging.Formatter(log_format)
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+
+    if loglevel.lower() == "warning":
+        level = logging.WARNING
+    if loglevel.lower() == "critical":
+        level = logging.CRITICAL
+    if loglevel.lower() == "exception":
+        level = logging.EXCEPTION
+    if loglevel.lower() == "info":
+        level = logging.INFO
+    if loglevel.lower() == "debug":
+        level = logging.DEBUG
+    if loglevel.lower() == "error":
+        level = logging.ERROR
+    stdout = logging.StreamHandler(sys.stdout)
+    stdout.setLevel(level)
+    stdout.setFormatter(formatter)
+
+    logger = logging.Logger(logname)
+    logger.setLevel(level)
+    logger.addHandler(console)
+    eventlog = EventLogger(logger, logname)
+    return(eventlog)
 
 def warn(msg):
-    eventlog.info('[powerline-shell] {0}', msg)
+    eventlog = set_logger("warning", 'powerline-shell')
+    eventlog.warn('[powerline-shell] {0}', msg)
 
+class EventLogger(object):
+        '''Proxy class for logging.Logger instance
+
+        It emits messages in format ``{ext}:{prefix}:{message}`` where
+
+        ``{ext}``
+                is an EventLogger extension (e.g. “vim”, “shell”, “python”).
+        ``{prefix}``
+                is a local prefix, usually a segment name.
+        ``{message}``
+                is the original message passed to one of the logging methods.
+
+        Each of the methods (``critical``, ``exception``, ``info``, ``error``,
+        ``warn``, ``debug``) expects to receive message in an ``str.format`` format,
+        not in printf-like format.
+
+        Log is saved to the location :ref:`specified by user <config-common-log>`.
+        '''
+
+        def __init__(self, logger, ext):
+                self.logger = logger
+                self.ext = ext
+                self.prefix = ''
+                self.last_msgs = {}
+
+        def _log(self, attr, msg, *args, **kwargs):
+                prefix = kwargs.get('prefix') or self.prefix
+                prefix = self.ext + ((':' + prefix) if prefix else '')
+                msg = safe_unicode(msg)
+                if args or kwargs:
+                        args = [safe_unicode(s) if isinstance(s, bytes) else s for s in args]
+                        kwargs = dict((
+                                (k, safe_unicode(v) if isinstance(v, bytes) else v)
+                                for k, v in kwargs.items()
+                        ))
+                        msg = msg.format(*args, **kwargs)
+                msg = prefix + ':' + msg
+                key = attr + ':' + prefix
+                if msg != self.last_msgs.get(key):
+                        getattr(self.logger, attr)(msg)
+                        self.last_msgs[key] = msg
+        def critical(self, msg, *args, **kwargs):
+                self._log('critical', msg, *args, **kwargs)
+
+        def exception(self, msg, *args, **kwargs):
+                self._log('exception', msg, *args, **kwargs)
+
+        def info(self, msg, *args, **kwargs):
+                self._log('info', msg, *args, **kwargs)
+
+        def error(self, msg, *args, **kwargs):
+                self._log('error', msg, *args, **kwargs)
+
+        def warn(self, msg, *args, **kwargs):
+                self._log('warning', msg, *args, **kwargs)
+
+        def debug(self, msg, *args, **kwargs):
+                self._log('debug', msg, *args, **kwargs)
 
 class BasicSegment(object):
     def __init__(self, powerline, segment_def):

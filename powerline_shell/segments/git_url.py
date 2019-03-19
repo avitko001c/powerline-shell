@@ -19,7 +19,7 @@ def get_git_url():
             return 0
         pdata = p.communicate()
         if p.returncode != 0:
-            return 'None'
+            return None
         return pdata[0].decode(get_preferred_output_encoding()).rstrip('\n')
     else:
         eventlog.info('git command not found: cannot use this segment')

@@ -18,6 +18,8 @@ light3 = 248
 light4 = 246
 light5 = 255
 
+
+vitko_gray = 272a33
 dark_gray  = 245
 light_gray = 244
 

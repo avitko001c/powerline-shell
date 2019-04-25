@@ -1,5 +1,5 @@
-import sys
 import os
+import sys
 import threading
 
 py3 = sys.version_info[0] == 3
@@ -7,6 +7,8 @@ py3 = sys.version_info[0] == 3
 if py3:
     def unicode_(x):
         return str(x)
+
+
     def decode(x):
         return x.decode("utf-8")
 else:
@@ -41,12 +43,12 @@ class RepoStats(object):
 
     def __eq__(self, other):
         return (
-            self.ahead == other.ahead and
-            self.behind == other.behind and
-            self.new == other.new and
-            self.changed == other.changed and
-            self.staged == other.staged and
-            self.conflicted == other.conflicted
+                self.ahead == other.ahead and
+                self.behind == other.behind and
+                self.new == other.new and
+                self.changed == other.changed and
+                self.staged == other.staged and
+                self.conflicted == other.conflicted
         )
 
     @property
@@ -80,6 +82,7 @@ class RepoStats(object):
             if self[_key]:
                 s = u" {}{} ".format(self.n_or_empty(_key), self.symbols[_key])
                 powerline.append(s, fg, bg)
+
         color = powerline.theme
         add('ahead', color.GIT_AHEAD_FG, color.GIT_AHEAD_BG)
         add('behind', color.GIT_BEHIND_FG, color.GIT_BEHIND_BG)
@@ -109,6 +112,7 @@ class ThreadedSegment(threading.Thread):
         self.segment_def = segment_def  # type: dict
 
 
+# noinspection PyDeprecation,PyDeprecation,PyCompatibility
 def import_file(module_name, path):
     # An implementation of https://stackoverflow.com/a/67692/683436
     if py3 and sys.version_info[1] >= 5:
@@ -149,4 +153,3 @@ def get_git_subprocess_env():
     # LANG is specified to ensure git always uses a language we are expecting.
     # Otherwise we may be unable to parse the output.
     return get_subprocess_env(LANG="C")
-

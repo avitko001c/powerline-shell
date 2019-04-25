@@ -1,4 +1,5 @@
 import unittest
+
 from powerline_shell.utils import RepoStats
 
 

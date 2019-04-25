@@ -1,4 +1,5 @@
 import subprocess
+
 from ..utils import RepoStats, ThreadedSegment, get_subprocess_env
 
 
@@ -47,6 +48,7 @@ def build_stats():
     return stats, branch
 
 
+# noinspection PyAttributeOutsideInit,PyAttributeOutsideInit
 class Segment(ThreadedSegment):
     def run(self):
         self.stats, self.branch = build_stats()

@@ -1,12 +1,13 @@
 import os
 import subprocess
+
 from ..utils import RepoStats, ThreadedSegment, get_subprocess_env
 
 
 def _get_fossil_branch():
     branches = os.popen("fossil branch 2>/dev/null").read().strip().split("\n")
     return ''.join([
-        i.replace('*','').strip()
+        i.replace('*', '').strip()
         for i in branches
         if i.startswith('*')
     ])
@@ -52,6 +53,7 @@ def build_stats():
     return stats, branch
 
 
+# noinspection PyAttributeOutsideInit,PyAttributeOutsideInit
 class Segment(ThreadedSegment):
 
     def add_to_powerline(self):

@@ -1,4 +1,5 @@
 import subprocess
+
 from ..utils import RepoStats, ThreadedSegment, get_git_subprocess_env
 
 
@@ -17,6 +18,7 @@ def get_stash_count():
     return pdata[0].count(b'\n')
 
 
+# noinspection PyAttributeOutsideInit
 class Segment(ThreadedSegment):
     def run(self):
         self.stash_count = get_stash_count()

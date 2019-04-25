@@ -1,7 +1,9 @@
 import subprocess
+
 from ..utils import ThreadedSegment, decode
 
 
+# noinspection PyAttributeOutsideInit
 class Segment(ThreadedSegment):
     def run(self):
         self.version = None

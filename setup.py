@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name="powerline-shell",
@@ -23,7 +23,7 @@ setup(
         "powerline_shell.themes",
     ],
     install_requires=[
-        "argparse",
+        "argparse", 'mock', 'parameterized', 'sh'
     ],
     entry_points="""
     [console_scripts]

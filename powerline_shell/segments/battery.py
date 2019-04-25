@@ -1,5 +1,6 @@
-from ..utils import BasicSegment, warn
 import os
+
+from ..utils import BasicSegment, warn
 
 
 class Segment(BasicSegment):

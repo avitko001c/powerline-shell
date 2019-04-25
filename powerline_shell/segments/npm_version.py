@@ -1,7 +1,9 @@
 import subprocess
+
 from ..utils import ThreadedSegment
 
 
+# noinspection PyAttributeOutsideInit
 class Segment(ThreadedSegment):
     def run(self):
         try:

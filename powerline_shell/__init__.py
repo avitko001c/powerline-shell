@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import print_function
+
 import argparse
-import os
-import sys
 import importlib
 import json
-from .utils import warn, py3, import_file
+import os
 import re
+import sys
+
+from .utils import warn, py3, import_file
 
 
 def _current_dir():
@@ -38,8 +40,8 @@ def get_valid_cwd():
         cwd = _current_dir()
     except:
         warn("Your current directory is invalid. If you open a ticket at " +
-            "https://github.com/milkbikis/powerline-shell/issues/new " +
-            "we would love to help fix the issue.")
+             "https://github.com/milkbikis/powerline-shell/issues/new " +
+             "we would love to help fix the issue.")
         sys.stdout.write("> ")
         sys.exit(1)
 
@@ -118,8 +120,8 @@ class Powerline(object):
         if self.args.shell == "bash" and sanitize:
             content = re.sub(r"([`$])", r"\\\1", content)
         self.segments.append((content, fg, bg,
-            separator if separator is not None else self.separator,
-            separator_fg if separator_fg is not None else bg))
+                              separator if separator is not None else self.separator,
+                              separator_fg if separator_fg is not None else bg))
 
     def draw(self):
         text = (''.join(self.draw_segment(i) for i in range(len(self.segments)))
@@ -131,7 +133,7 @@ class Powerline(object):
 
     def draw_segment(self, idx):
         segment = self.segments[idx]
-        next_segment = self.segments[idx + 1] if idx < len(self.segments)-1 else None
+        next_segment = self.segments[idx + 1] if idx < len(self.segments) - 1 else None
 
         return ''.join((
             self.fgcolor(segment[1]),
@@ -151,6 +153,7 @@ def find_config():
         full = os.path.expanduser(location)
         if os.path.exists(full):
             return full
+
 
 DEFAULT_CONFIG = {
     "segments": [
@@ -185,7 +188,7 @@ class CustomImporter(object):
                 self.file_import_count += 1
             except (ImportError, IOError):
                 msg = "{0} {1} cannot be found".format(description, module_or_file)
-                raise ModuleNotFoundException( msg)
+                raise ModuleNotFoundException(msg)
         return mod
 
 

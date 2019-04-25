@@ -1,8 +1,10 @@
-import unittest
-import mock
-import tempfile
 import shutil
+import tempfile
+import unittest
+
+import mock
 import sh
+
 import powerline_shell.segments.git as git
 from ..testing_utils import dict_side_effect_fn
 
@@ -24,12 +26,14 @@ class GitTest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.dirname)
 
-    def _add_and_commit(self, filename):
+    @staticmethod
+    def _add_and_commit(filename):
         sh.touch(filename)
         sh.git("add", filename)
         sh.git("commit", "-m", "add file " + filename)
 
-    def _checkout_new_branch(self, branch):
+    @staticmethod
+    def _checkout_new_branch(branch):
         sh.git("checkout", "-b", branch)
 
     def _get_commit_hash(self):
@@ -37,7 +41,7 @@ class GitTest(unittest.TestCase):
 
     @mock.patch('powerline_shell.utils.get_PATH')
     def test_git_not_installed(self, get_PATH):
-        get_PATH.return_value = "" # so git can't be found
+        get_PATH.return_value = ""  # so git can't be found
         self.segment.start()
         self.segment.add_to_powerline()
         self.assertEqual(self.powerline.append.call_count, 0)

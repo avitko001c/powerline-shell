@@ -1,5 +1,7 @@
 import unittest
+
 import mock
+
 import powerline_shell.segments.uptime as uptime
 
 test_cases = {

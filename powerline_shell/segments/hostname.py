@@ -1,7 +1,8 @@
-from ..utils import BasicSegment
+from socket import gethostname
+
 from ..color_compliment import stringToHashToColorAndOpposite
 from ..colortrans import rgb2short
-from socket import gethostname
+from ..utils import BasicSegment
 
 
 class Segment(BasicSegment):

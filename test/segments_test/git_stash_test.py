@@ -1,8 +1,10 @@
-import unittest
-import mock
-import tempfile
 import shutil
+import tempfile
+import unittest
+
+import mock
 import sh
+
 import powerline_shell.segments.git_stash as git_stash
 from powerline_shell.utils import RepoStats
 
@@ -20,15 +22,18 @@ class GitStashTest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.dirname)
 
-    def _add_and_commit(self, filename):
+    @staticmethod
+    def _add_and_commit(filename):
         sh.touch(filename)
         sh.git("add", filename)
         sh.git("commit", "-m", "add file " + filename)
 
-    def _overwrite_file(self, filename, content):
+    @staticmethod
+    def _overwrite_file(filename, content):
         sh.echo(content, _out=filename)
 
-    def _stash(self):
+    @staticmethod
+    def _stash():
         sh.git("stash")
 
     @mock.patch('powerline_shell.utils.get_PATH')

@@ -1,8 +1,10 @@
 import subprocess
+
 from ..utils import ThreadedSegment, RepoStats, get_subprocess_env
 
 
 def _get_svn_revision():
+    revision = ""
     p = subprocess.Popen(["svn", "info", "--xml"],
                          stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE,
@@ -49,6 +51,7 @@ def build_stats():
     return stats, revision
 
 
+# noinspection PyAttributeOutsideInit,PyAttributeOutsideInit
 class Segment(ThreadedSegment):
     def run(self):
         self.stats, self.revision = build_stats()

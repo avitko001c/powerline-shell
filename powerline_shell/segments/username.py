@@ -1,6 +1,7 @@
-from ..utils import BasicSegment
-import os
 import getpass
+import os
+
+from ..utils import BasicSegment
 
 
 class Segment(BasicSegment):

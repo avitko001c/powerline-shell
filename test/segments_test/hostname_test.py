@@ -1,8 +1,9 @@
 import unittest
+
 import mock
+
 import powerline_shell.segments.hostname as hostname
 from powerline_shell.themes.default import Color
-from argparse import Namespace
 
 
 class HostnameTest(unittest.TestCase):

@@ -1,12 +1,13 @@
-import unittest
-import mock
-import tempfile
 import shutil
+import tempfile
+import unittest
+
+import mock
 import sh
+
 import powerline_shell.segments.hg as hg
 from powerline_shell.utils import RepoStats
 from ..testing_utils import dict_side_effect_fn
-
 
 test_cases = {
     "? new-file": RepoStats(new=1),
@@ -34,17 +35,19 @@ class HgTest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.dirname)
 
-    def _add_and_commit(self, filename):
+    @staticmethod
+    def _add_and_commit(filename):
         sh.touch(filename)
         sh.hg("add", filename)
         sh.hg("commit", "-m", "add file " + filename)
 
-    def _checkout_new_branch(self, branch):
+    @staticmethod
+    def _checkout_new_branch(branch):
         sh.hg("branch", branch)
 
     @mock.patch("powerline_shell.utils.get_PATH")
     def test_hg_not_installed(self, get_PATH):
-        get_PATH.return_value = "" # so hg can"t be found
+        get_PATH.return_value = ""  # so hg can"t be found
         self.segment.start()
         self.segment.add_to_powerline()
         self.assertEqual(self.powerline.append.call_count, 0)

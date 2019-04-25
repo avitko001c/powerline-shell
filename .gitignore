@@ -12,3 +12,4 @@ uninstall.txt
 .DS_Store
 *sublime*
 .pytest_cache
+__pycache__

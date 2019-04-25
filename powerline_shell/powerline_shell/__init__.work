@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 import re
@@ -7,8 +6,9 @@ import sys
 import json
 import logging
 import argparse
+import traceback
 import importlib
-from powerline_shell.utils import warn, py3, import_file, EventLogger
+from powerline_shell.utils import warn, info, debug, exception, critical, error, py3, import_file
 from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
 
 
@@ -28,35 +28,6 @@ def _current_dir():
         return os.getcwd()
     return os.getenv("PWD") or os.getcwd()
 
-
-def set_logger(loglevel, logname):
-    log_format = '%(asctime)s:%(levelname)s:%(message)s'
-    formatter = logging.Formatter(log_format)
-    console = logging.StreamHandler()
-    console.setLevel(logging.INFO)
-
-    if loglevel.lower() == "warning":
-        level = logging.WARNING
-    if loglevel.lower() == "critical":
-        level = logging.CRITICAL
-    if loglevel.lower() == "exception":
-        level = logging.EXCEPTION
-    if loglevel.lower() == "info":
-        level = logging.INFO
-    if loglevel.lower() == "debug":
-        level = logging.DEBUG
-    if loglevel.lower() == "error":
-        level = logging.ERROR
-    stdout = logging.StreamHandler(sys.stdout)
-    stdout.setLevel(level)
-    stdout.setFormatter(formatter)
-
-    logger = logging.Logger(logname)
-    logger.setLevel(level)
-    logger.addHandler(stdout)
-    logger.addHandler(console)
-    eventlog = EventLogger(logger, logname)
-    return(eventlog)
 
 def get_valid_cwd():
     """Determine and check the current working directory for validity.
@@ -84,27 +55,29 @@ def get_valid_cwd():
              + up)
     return cwd
 
-class Powerline(object):
-    symbols = {
-        'compatible': {
+DEFAULT_SYMBOLS = {
+    'compatible': {
             'lock': 'RO',
             'network': 'SSH',
             'separator': u'\u25B6',
             'separator_thin': u'\u276F'
-        },
-        'patched': {
+    },
+    'patched': {
             'lock': u'\uE0A2',
             'network': 'SSH',
             'separator': u'\uE0B0',
             'separator_thin': u'\uE0B1'
-        },
-        'flat': {
+    },
+    'flat': {
             'lock': u'\uE0A2',
             'network': 'SSH',
             'separator': '',
             'separator_thin': ''
-        },
     }
+}
+
+
+class Powerline(object):
 
     color_templates = {
         'bash': r'\[\e%s\]',
@@ -118,13 +91,17 @@ class Powerline(object):
         self.config = config
         self.theme = theme
         self.cwd = get_valid_cwd()
-        mode = config.get("mode", "patched")
+        self.mode = config.get("mode", "patched")
+
+        self.template_symbols = getattr(self.theme, 'SYMBOLS', DEFAULT_SYMBOLS)
+        self.symbols = self.template_symbols.get(self.mode, DEFAULT_SYMBOLS.get(self.mode, DEFAULT_SYMBOLS['patched']))
+
         self.color_template = self.color_templates[args.shell]
         self.reset = self.color_template % '[0m'
-        self.lock = Powerline.symbols[mode]['lock']
-        self.network = Powerline.symbols[mode]['network']
-        self.separator = Powerline.symbols[mode]['separator']
-        self.separator_thin = Powerline.symbols[mode]['separator_thin']
+        self.lock = self.symbols['lock']
+        self.network = self.symbols['network']
+        self.separator = self.symbols['separator']
+        self.separator_thin = self.symbols['separator_thin']
         self.segments = []
 
     def segment_conf(self, seg_name, key, default=None):
@@ -237,11 +214,11 @@ def get_args():
 def main():
     args = get_args()
     if args.generate_config:
-        eventlog.info(json.dumps(DEFAULT_CONFIG, indent=2))
+        info(json.dumps(DEFAULT_CONFIG, indent=2))
         return 0
 
     if args.config and not os.path.exists(os.path.expanduser(args.config)):
-        eventlog.info('Cannot find config file using default config file: {0}', args.config)
+        info('Cannot find config file using default config file: {0}', args.config)
         config_path = find_config()
     elif args.config and os.path.exists(os.path.expanduser(args.config)):
         config_path = args.config
@@ -251,9 +228,10 @@ def main():
         with open(config_path) as f:
             try:
                 config = json.loads(f.read())
-            except Exception as e:
-                warn("Config file ({0}) could not be decoded! Error: {1}"
-                     .format(config_path, e))
+            except Exception:
+                warn("Config file ({0}) could not be decoded! Using Default config:"
+                     .format(config_path))
+                error(traceback.format_exc())
                 config = DEFAULT_CONFIG
     else:
         config = DEFAULT_CONFIG
@@ -266,7 +244,6 @@ def main():
     theme = getattr(theme_mod, "Color")
 
     powerline = Powerline(args, config, theme)
-    segments = []
     for seg_conf in config["segments"]:
         if not isinstance(seg_conf, dict):
             seg_conf = {"type": seg_conf}
@@ -276,9 +253,16 @@ def main():
             seg_name,
             "Segment")
         segment = getattr(seg_mod, "Segment")(powerline, seg_conf)
-        segment.start()
-        segments.append(segment)
-    for segment in segments:
-        segment.add_to_powerline()
-    sys.stdout.write(powerline.draw())
+        try:
+            segment.start()
+        except:
+            error(traceback.format_exec())
+        try:
+            segment.add_to_powerline()
+        except:
+            error(traceback.format_exc())
+    try:
+        sys.stdout.write(powerline.draw())
+    except:
+        error(traceback.format_exec())
     return 0

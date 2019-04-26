@@ -9,7 +9,8 @@ import os, re, string
 @requires_segment_info
 class GitStatusSegment(Segment):
 
-    def execute(self, pl, command):
+    @staticmethod
+    def execute(pl, command):
         pl.debug('Executing command: %s' % ' '.join(command))
 
         git_env = os.environ.copy()
@@ -111,7 +112,9 @@ class GitStatusSegment(Segment):
 
         return segments
 
-    def __call__(self, pl, segment_info, use_dash_c=True, show_tag=False, formats={}, detached_head_style='revision'):
+    def __call__(self, pl, segment_info, use_dash_c=True, show_tag=False, formats=None, detached_head_style='revision'):
+        if formats is None:
+            formats = {}
         pl.debug('Running gitstatus %s -C' % ('with' if use_dash_c else 'without'))
 
         cwd = segment_info['getcwd']()

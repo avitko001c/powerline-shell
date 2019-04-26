@@ -24,7 +24,8 @@ class PrivateIp():
         ip = self.strategy_ifconfig(interface, ifconfig_parser)
         return ip if ip else self.strategy_hostname()
 
-    def strategy_ifconfig(self, interface, parser):
+    @staticmethod
+    def strategy_ifconfig(interface, parser):
         try:
             proc = subprocess.Popen(["ifconfig", interface],
                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -37,7 +38,8 @@ class PrivateIp():
         except OSError:
             return None
 
-    def strategy_hostname(self):
+    @staticmethod
+    def strategy_hostname():
         try:
             proc = subprocess.Popen(["hostname", "-i"],
                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)

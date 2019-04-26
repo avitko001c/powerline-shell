@@ -1,6 +1,7 @@
 from colorsys import hls_to_rgb, rgb_to_hls
 # md5 deprecated since Python 2.5
 try:
+    # noinspection PyCompatibility
     from md5 import md5
 except ImportError:
     from hashlib import md5

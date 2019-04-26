@@ -4,7 +4,6 @@ import re
 import os
 import sys
 import json
-import logging
 import argparse
 import traceback
 import importlib
@@ -218,6 +217,7 @@ def main():
         return 0
 
     if args.config and not os.path.exists(os.path.expanduser(args.config)):
+        # noinspection PyArgumentList
         info('Cannot find config file using default config file: {0}', args.config)
         config_path = find_config()
     elif args.config and os.path.exists(os.path.expanduser(args.config)):

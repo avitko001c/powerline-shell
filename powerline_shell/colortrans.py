@@ -283,7 +283,9 @@ RGB2SHORT_DICT = {
 
 def rgb2short(r, g, b):
     """ Find the closest xterm-256 approximation to the given RGB value.
-    @param r,g,b: each is a number between 0-255 for the Red, Green, and Blue values
+    :param r: each is a number between 0-255
+    :param g: each is a number between 0-255
+    :param b: each is a number between 0-255
     @returns: integer between 0 and 255, compatible with xterm.
     >>> rgb2short(18, 52, 86)
     23
@@ -291,7 +293,7 @@ def rgb2short(r, g, b):
     231
     >>> rgb2short(13, 173, 214) # vimeo logo
     38
-    :param r:
+
     """
     incs = (0x00, 0x5f, 0x87, 0xaf, 0xd7, 0xff)
     # Break 6-char RGB code into 3 integer vals.

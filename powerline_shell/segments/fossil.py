@@ -34,6 +34,7 @@ def _get_fossil_status():
     return status
 
 
+# noinspection PySimplifyBooleanCheck
 def build_stats():
     try:
         subprocess.Popen(['fossil'], stdout=subprocess.PIPE,

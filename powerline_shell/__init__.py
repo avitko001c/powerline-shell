@@ -39,8 +39,8 @@ def get_valid_cwd():
         cwd = _current_dir()
     except:
         warn("Your current directory is invalid. If you open a ticket at " +
-            "https://github.com/milkbikis/powerline-shell/issues/new " +
-            "we would love to help fix the issue.")
+             "https://github.com/milkbikis/powerline-shell/issues/new " +
+             "we would love to help fix the issue.")
         sys.stdout.write("> ")
         sys.exit(1)
 
@@ -54,30 +54,30 @@ def get_valid_cwd():
              + up)
     return cwd
 
+
 DEFAULT_SYMBOLS = {
     'compatible': {
-            'lock': 'RO',
-            'network': 'SSH',
-            'separator': u'\u25B6',
-            'separator_thin': u'\u276F'
+        'lock': 'RO',
+        'network': 'SSH',
+        'separator': u'\u25B6',
+        'separator_thin': u'\u276F'
     },
     'patched': {
-            'lock': u'\uE0A2',
-            'network': 'SSH',
-            'separator': u'\uE0B0',
-            'separator_thin': u'\uE0B1'
+        'lock': u'\uE0A2',
+        'network': 'SSH',
+        'separator': u'\uE0B0',
+        'separator_thin': u'\uE0B1'
     },
     'flat': {
-            'lock': u'\uE0A2',
-            'network': 'SSH',
-            'separator': '',
-            'separator_thin': ''
+        'lock': u'\uE0A2',
+        'network': 'SSH',
+        'separator': '',
+        'separator_thin': ''
     }
 }
 
 
 class Powerline(object):
-
     color_templates = {
         'bash': r'\[\e%s\]',
         'tcsh': r'%%{\e%s%%}',
@@ -124,8 +124,8 @@ class Powerline(object):
         if self.args.shell == "bash" and sanitize:
             content = re.sub(r"([`$])", r"\\\1", content)
         self.segments.append((content, fg, bg,
-            separator if separator is not None else self.separator,
-            separator_fg if separator_fg is not None else bg))
+                              separator if separator is not None else self.separator,
+                              separator_fg if separator_fg is not None else bg))
 
     def draw(self):
         text = (''.join(self.draw_segment(i) for i in range(len(self.segments)))
@@ -137,7 +137,7 @@ class Powerline(object):
 
     def draw_segment(self, idx):
         segment = self.segments[idx]
-        next_segment = self.segments[idx + 1] if idx < len(self.segments)-1 else None
+        next_segment = self.segments[idx + 1] if idx < len(self.segments) - 1 else None
 
         return ''.join((
             self.fgcolor(segment[1]),
@@ -157,6 +157,7 @@ def find_config():
         full = os.path.expanduser(location)
         if os.path.exists(full):
             return full
+
 
 DEFAULT_CONFIG = {
     "segments": [
@@ -191,8 +192,9 @@ class CustomImporter(object):
                 self.file_import_count += 1
             except (ImportError, IOError):
                 msg = "{0} {1} cannot be found".format(description, module_or_file)
-                raise ModuleNotFoundException( msg)
+                raise ModuleNotFoundException(msg)
         return mod
+
 
 def get_args():
     arg_parser = argparse.ArgumentParser()
@@ -209,6 +211,7 @@ def get_args():
                             help='Error code returned by the last command')
     argparser = arg_parser.parse_args()
     return argparser
+
 
 def main():
     args = get_args()
@@ -266,7 +269,7 @@ def main():
             seg_conf = {"type": seg_conf}
         process_segment(seg_conf)
 
-    #with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+    # with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
     #    seg = {executer.submit(process_segment, seg_conf): seg_conf for seg_conf in config["segments"]}
     #    for complete in concurrent.futures.as_completed(seg):
     #        out = seg[complete]

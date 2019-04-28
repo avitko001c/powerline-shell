@@ -15,6 +15,12 @@ test_cases = {
 }
 
 
+def _add_and_commit(filename):
+    sh.touch(filename)
+    sh.fossil("add", filename)
+    sh.fossil("commit", "-m", "add file " + filename)
+
+
 class FossilTest(unittest.TestCase):
 
     def setUp(self):
@@ -33,18 +39,13 @@ class FossilTest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.dirname)
 
-    def _add_and_commit(self, filename):
-        sh.touch(filename)
-        sh.fossil("add", filename)
-        sh.fossil("commit", "-m", "add file " + filename)
-
     def _checkout_new_branch(self, branch):
         sh.fossil("branch", "new", branch, "trunk")
         sh.fossil("checkout", branch)
 
     @mock.patch("powerline_shell.utils.get_PATH")
     def test_fossil_not_installed(self, get_PATH):
-        get_PATH.return_value = "" # so fossil can't be found
+        get_PATH.return_value = ""  # so fossil can't be found
         self.segment.start()
         self.segment.add_to_powerline()
         self.assertEqual(self.powerline.append.call_count, 0)
@@ -56,13 +57,13 @@ class FossilTest(unittest.TestCase):
         self.assertEqual(self.powerline.append.call_count, 0)
 
     def test_standard(self):
-        self._add_and_commit("foo")
+        _add_and_commit("foo")
         self.segment.start()
         self.segment.add_to_powerline()
         self.assertEqual(self.powerline.append.call_args[0][0], " trunk ")
 
     def test_different_branch(self):
-        self._add_and_commit("foo")
+        _add_and_commit("foo")
         self._checkout_new_branch("bar")
         self.segment.start()
         self.segment.add_to_powerline()

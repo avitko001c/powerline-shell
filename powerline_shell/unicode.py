@@ -8,68 +8,65 @@ from unicodedata import east_asian_width, combining
 
 from powerline_shell.encoding import get_preferred_output_encoding
 
+try:
+    from __builtin__ import unicode
+except ImportError:
+    unicode = str
 
 try:
-	from __builtin__ import unicode
+    from __builtin__ import unichr
 except ImportError:
-	unicode = str
-
-
-try:
-	from __builtin__ import unichr
-except ImportError:
-	unichr = chr
-
+    unichr = chr
 
 if sys.maxunicode < 0x10FFFF:
-	_unichr = unichr
+    _unichr = unichr
 
-	def unichr(ch):
-		if ch <= sys.maxunicode:
-			return _unichr(ch)
-		else:
-			ch -= 0x10000
-			return _unichr((ch >> 10) + 0xD800) + _unichr((ch & ((1 << 10) - 1)) + 0xDC00)
+
+    def unichr(ch):
+        if ch <= sys.maxunicode:
+            return _unichr(ch)
+        else:
+            ch -= 0x10000
+            return _unichr((ch >> 10) + 0xD800) + _unichr((ch & ((1 << 10) - 1)) + 0xDC00)
 
 
 def u(s):
-	'''Return unicode instance assuming UTF-8 encoded string.
+    '''Return unicode instance assuming UTF-8 encoded string.
 	'''
-	if type(s) is unicode:
-		return s
-	else:
-		return unicode(s, 'utf-8')
+    if type(s) is unicode:
+        return s
+    else:
+        return unicode(s, 'utf-8')
 
 
 if sys.version_info < (3,):
-	def tointiter(s):
-		'''Convert a byte string to the sequence of integers
+    def tointiter(s):
+        '''Convert a byte string to the sequence of integers
 		'''
-		return (ord(c) for c in s)
+        return (ord(c) for c in s)
 else:
-	def tointiter(s):
-		'''Convert a byte string to the sequence of integers
+    def tointiter(s):
+        '''Convert a byte string to the sequence of integers
 		'''
-		return iter(s)
+        return iter(s)
 
 
 def powerline_decode_error(e):
-	if not isinstance(e, UnicodeDecodeError):
-		raise NotImplementedError
-	return (''.join((
-		'<{0:02X}>'.format(c)
-		for c in tointiter(e.object[e.start:e.end])
-	)), e.end)
+    if not isinstance(e, UnicodeDecodeError):
+        raise NotImplementedError
+    return (''.join((
+        '<{0:02X}>'.format(c)
+        for c in tointiter(e.object[e.start:e.end])
+    )), e.end)
 
 
 codecs.register_error('powerline_decode_error', powerline_decode_error)
-
 
 last_swe_idx = 0
 
 
 def register_strwidth_error(strwidth):
-	'''Create new encode errors handling method similar to ``replace``
+    '''Create new encode errors handling method similar to ``replace``
 
 	Like ``replace`` this method uses question marks in place of the characters 
 	that cannot be represented in the requested encoding. Unlike ``replace`` the 
@@ -90,36 +87,36 @@ def register_strwidth_error(strwidth):
 
 	:return: New error handling method name.
 	'''
-	global last_swe_idx
-	last_swe_idx += 1
+    global last_swe_idx
+    last_swe_idx += 1
 
-	def powerline_encode_strwidth_error(e):
-		if not isinstance(e, UnicodeEncodeError):
-			raise NotImplementedError
-		return ('?' * strwidth(e.object[e.start:e.end]), e.end)
+    def powerline_encode_strwidth_error(e):
+        if not isinstance(e, UnicodeEncodeError):
+            raise NotImplementedError
+        return '?' * strwidth(e.object[e.start:e.end]), e.end
 
-	ename = 'powerline_encode_strwidth_error_{0}'.format(last_swe_idx)
-	codecs.register_error(ename, powerline_encode_strwidth_error)
-	return ename
+    ename = 'powerline_encode_strwidth_error_{0}'.format(last_swe_idx)
+    codecs.register_error(ename, powerline_encode_strwidth_error)
+    return ename
 
 
 def out_u(s):
-	'''Return unicode string suitable for displaying
+    '''Return unicode string suitable for displaying
 
 	Unlike other functions assumes get_preferred_output_encoding() first. Unlike 
 	u() does not throw exceptions for invalid unicode strings. Unlike 
 	safe_unicode() does throw an exception if object is not a string.
 	'''
-	if isinstance(s, unicode):
-		return s
-	elif isinstance(s, bytes):
-		return unicode(s, get_preferred_output_encoding(), 'powerline_decode_error')
-	else:
-		raise TypeError('Expected unicode or bytes instance, got {0}'.format(repr(type(s))))
+    if isinstance(s, unicode):
+        return s
+    elif isinstance(s, bytes):
+        return unicode(s, get_preferred_output_encoding(), 'powerline_decode_error')
+    else:
+        raise TypeError('Expected unicode or bytes instance, got {0}'.format(repr(type(s))))
 
 
 def safe_unicode(s):
-	'''Return unicode instance without raising an exception.
+    '''Return unicode instance without raising an exception.
 
 	Order of assumptions:
 	* ASCII string or unicode object
@@ -130,25 +127,25 @@ def safe_unicode(s):
 	* If everything failed use safe_unicode on last exception with which 
 	  everything failed
 	'''
-	try:
-		try:
-			if type(s) is bytes:
-				return unicode(s, 'ascii')
-			else:
-				return unicode(s)
-		except UnicodeDecodeError:
-			try:
-				return unicode(s, 'utf-8')
-			except TypeError:
-				return unicode(str(s), 'utf-8')
-			except UnicodeDecodeError:
-				return unicode(s, get_preferred_output_encoding())
-	except Exception as e:
-		return safe_unicode(e)
+    try:
+        try:
+            if type(s) is bytes:
+                return unicode(s, 'ascii')
+            else:
+                return unicode(s)
+        except UnicodeDecodeError:
+            try:
+                return unicode(s, 'utf-8')
+            except TypeError:
+                return unicode(str(s), 'utf-8')
+            except UnicodeDecodeError:
+                return unicode(s, get_preferred_output_encoding())
+    except Exception as e:
+        return safe_unicode(e)
 
 
 class FailedUnicode(unicode):
-	'''Builtin ``unicode`` subclass indicating fatal error
+    '''Builtin ``unicode`` subclass indicating fatal error
 
 	If your code for some reason wants to determine whether `.render()` method 
 	failed it should check returned string for being a FailedUnicode instance. 
@@ -156,25 +153,24 @@ class FailedUnicode(unicode):
 	to do what you like in place of catching the exception and returning 
 	FailedUnicode.
 	'''
-	pass
+    pass
 
 
 if sys.version_info < (3,):
-	def string(s):
-		if type(s) is not str:
-			return s.encode('utf-8')
-		else:
-			return s
+    def string(s):
+        if type(s) is not str:
+            return s.encode('utf-8')
+        else:
+            return s
 else:
-	def string(s):
-		if type(s) is not str:
-			return s.decode('utf-8')
-		else:
-			return s
-
+    def string(s):
+        if type(s) is not str:
+            return s.decode('utf-8')
+        else:
+            return s
 
 string.__doc__ = (
-	'''Transform ``unicode`` or ``bytes`` object into ``str`` object
+    '''Transform ``unicode`` or ``bytes`` object into ``str`` object
 
 	On Python-2 this encodes ``unicode`` to ``bytes`` (which is ``str``) using 
 	UTF-8 encoding; on Python-3 this decodes ``bytes`` to ``unicode`` (which is 
@@ -188,13 +184,13 @@ string.__doc__ = (
 
 
 def surrogate_pair_to_character(high, low):
-	'''Transform a pair of surrogate codepoints to one codepoint
+    '''Transform a pair of surrogate codepoints to one codepoint
 	'''
-	return 0x10000 + ((high - 0xD800) << 10) + (low - 0xDC00)
+    return 0x10000 + ((high - 0xD800) << 10) + (low - 0xDC00)
 
 
 _strwidth_documentation = (
-	'''Compute string width in display cells
+    '''Compute string width in display cells
 
 	{0}
 
@@ -245,17 +241,17 @@ _strwidth_documentation = (
 
 
 def strwidth_ucs_4(width_data, string):
-	return sum(((
-		(
-			0
-		) if combining(symbol) else (
-			width_data[east_asian_width(symbol)]
-		)
-	) for symbol in string))
+    return sum(((
+        (
+            0
+        ) if combining(symbol) else (
+            width_data[east_asian_width(symbol)]
+        )
+    ) for symbol in string))
 
 
 strwidth_ucs_4.__doc__ = _strwidth_documentation.format(
-	'''This version of function expects that characters above 0xFFFF are 
+    '''This version of function expects that characters above 0xFFFF are 
 	represented using one symbol. This is only the case in UCS-4 Python builds.
 
 	.. note:
@@ -265,19 +261,19 @@ strwidth_ucs_4.__doc__ = _strwidth_documentation.format(
 
 
 def strwidth_ucs_2(width_data, string):
-	return sum(((
-		(
-			width_data[east_asian_width(string[i - 1] + symbol)]
-		) if 0xDC00 <= ord(symbol) <= 0xDFFF else (
-			0
-		) if combining(symbol) or 0xD800 <= ord(symbol) <= 0xDBFF else (
-			width_data[east_asian_width(symbol)]
-		)
-	) for i, symbol in enumerate(string)))
+    return sum(((
+        (
+            width_data[east_asian_width(string[i - 1] + symbol)]
+        ) if 0xDC00 <= ord(symbol) <= 0xDFFF else (
+            0
+        ) if combining(symbol) or 0xD800 <= ord(symbol) <= 0xDBFF else (
+            width_data[east_asian_width(symbol)]
+        )
+    ) for i, symbol in enumerate(string)))
 
 
 strwidth_ucs_2.__doc__ = _strwidth_documentation.format(
-	'''This version of function expects that characters above 0xFFFF are 
+    '''This version of function expects that characters above 0xFFFF are 
 	represented using two symbols forming a surrogate pair, which is the only 
 	option in UCS-2 Python builds. It still works correctly in UCS-4 Python 
 	builds, but is slower then its UCS-4 counterpart.''')

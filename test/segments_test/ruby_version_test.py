@@ -4,6 +4,7 @@ import powerline_shell.segments.ruby_version as ruby_version
 from powerline_shell.themes.default import Color
 from ..testing_utils import dict_side_effect_fn
 
+
 class RubyVersionTest(unittest.TestCase):
     def setUp(self):
         self.powerline = mock.MagicMock()

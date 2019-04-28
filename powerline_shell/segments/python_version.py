@@ -1,9 +1,8 @@
 import os
 import subprocess
-from powerline_shell.colortrans import rgb2short
 from powerline_shell.utils import ThreadedSegment, decode
 from powerline_shell.color_compliment import stringToHashToColorAndOpposite, rgb2short
-from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding, u
+from powerline_shell.encoding import u
 
 try:
     from shutil import wich  # Python-3.3 and later
@@ -25,6 +24,7 @@ class Segment(ThreadedSegment):
         except OSError:
             self.version = None
         self.line = "{0} {1}".format(self.logo, self.version)
+
     def add_to_powerline(self):
         self.join()
         if not self.version:

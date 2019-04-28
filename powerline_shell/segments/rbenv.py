@@ -1,6 +1,6 @@
 import subprocess
 from powerline_shell.utils import BasicSegment
-from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
+from powerline_shell.encoding import get_preferred_output_encoding
 
 
 class Segment(BasicSegment):
@@ -8,9 +8,9 @@ class Segment(BasicSegment):
         powerline = self.powerline
         try:
             version = subprocess.check_output(["rbenv", "local"]).decode(get_preferred_output_encoding()).rstrip()
-            #version = p1.communicate()[0].decode(get_preferred_output_encoding()).rstrip()
+            # version = p1.communicate()[0].decode(get_preferred_output_encoding()).rstrip()
             if len(version) <= 0:
-                    return
+                return
             powerline.append(' %s ' % version,
                              powerline.theme.VIRTUAL_ENV_FG,
                              powerline.theme.VIRTUAL_ENV_BG)

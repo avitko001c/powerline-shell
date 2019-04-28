@@ -7,16 +7,27 @@ import powerline_shell.segments.bzr as bzr
 from powerline_shell.utils import RepoStats
 from ..testing_utils import dict_side_effect_fn
 
-
 test_cases = (
-    (["unknown:","  new-file"], RepoStats(new=1)),
-    (["added:","  added-file"], RepoStats(staged=1)),
-    (["modified:","  modified-file"], RepoStats(changed=1)),
-    (["removed:","  removed-file"], RepoStats(changed=1)),
-    (["missing:","  missing-file"], RepoStats(changed=1)),
-    (["renamed:","  renamed-file"], RepoStats(changed=1)),
-    (["kind changed:","  kind-changed-file"], RepoStats(changed=1))
+    (["unknown:", "  new-file"], RepoStats(new=1)),
+    (["added:", "  added-file"], RepoStats(staged=1)),
+    (["modified:", "  modified-file"], RepoStats(changed=1)),
+    (["removed:", "  removed-file"], RepoStats(changed=1)),
+    (["missing:", "  missing-file"], RepoStats(changed=1)),
+    (["renamed:", "  renamed-file"], RepoStats(changed=1)),
+    (["kind changed:", "  kind-changed-file"], RepoStats(changed=1))
 )
+
+
+def _checkout_new_branch(branch):
+    sh.cd("..")
+    sh.bzr("branch", "trunk", branch)
+    sh.cd(branch)
+
+
+def _add_and_commit(filename):
+    sh.touch(filename)
+    sh.bzr("add", filename)
+    sh.bzr("commit", "-m", "add file " + filename)
 
 
 class BzrTest(unittest.TestCase):
@@ -39,19 +50,9 @@ class BzrTest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.dirname)
 
-    def _add_and_commit(self, filename):
-        sh.touch(filename)
-        sh.bzr("add", filename)
-        sh.bzr("commit", "-m", "add file " + filename)
-
-    def _checkout_new_branch(self, branch):
-        sh.cd("..")
-        sh.bzr("branch", "trunk", branch)
-        sh.cd(branch)
-
     @mock.patch("powerline_shell.utils.get_PATH")
     def test_bzr_not_installed(self, get_PATH):
-        get_PATH.return_value = "" # so bzr can't be found
+        get_PATH.return_value = ""  # so bzr can't be found
         self.segment.start()
         self.segment.add_to_powerline()
         self.assertEqual(self.powerline.append.call_count, 0)
@@ -63,14 +64,14 @@ class BzrTest(unittest.TestCase):
         self.assertEqual(self.powerline.append.call_count, 0)
 
     def test_trunk(self):
-        self._add_and_commit("foo")
+        _add_and_commit("foo")
         self.segment.start()
         self.segment.add_to_powerline()
         self.assertEqual(self.powerline.append.call_args[0][0], " trunk ")
 
     def test_different_branch(self):
-        self._add_and_commit("foo")
-        self._checkout_new_branch("bar")
+        _add_and_commit("foo")
+        _checkout_new_branch("bar")
         self.segment.start()
         self.segment.add_to_powerline()
         self.assertEqual(self.powerline.append.call_args[0][0], " bar ")

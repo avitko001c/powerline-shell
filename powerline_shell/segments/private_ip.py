@@ -3,7 +3,7 @@ import re
 from ..utils import ThreadedSegment
 
 
-class Defaults():
+class Defaults:
     INTERFACE = "en0"
     SHOW_OFFLINE = True
 
@@ -19,7 +19,7 @@ def ifconfig_parser(output):
     return ip
 
 
-class PrivateIp():
+class PrivateIp:
     def get(self, interface):
         ip = self.strategy_ifconfig(interface, ifconfig_parser)
         return ip if ip else self.strategy_hostname()
@@ -62,7 +62,7 @@ class Segment(ThreadedSegment):
             private_ip = PrivateIp()
             ip = private_ip.get(interface)
             self.ip = ip
-            #self.info("this is a message")
+            # self.info("this is a message")
         except OSError:
             self.ip = None
 

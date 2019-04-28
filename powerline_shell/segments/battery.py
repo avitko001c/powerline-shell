@@ -1,14 +1,16 @@
 import os
 import re
 import runcmd
-import subprocess
-from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
 from powerline_shell.utils import BasicSegment, warn
 
 try:
     from shutil import wich  # Python-3.3 and later
 except ImportError:
     which = lambda f: (lambda fp: os.path.exists(fp) and fp)(os.path.join('/usr/bin', f))
+
+class BatteryThreshold(object):
+    def __init__(self, Threshold):
+        self.threshold = Threshold
 
 class Segment(BasicSegment):
     def run(self):
@@ -62,5 +64,26 @@ class Segment(BasicSegment):
         else:
             bg = self.powerline.theme.BATTERY_NORMAL_BG
             fg = self.powerline.theme.BATTERY_NORMAL_FG
+        if cap < low_threshold and > int(5):
+            pwr_fmt = pwr_cap + u" \uf244 "
+            bg = self.powerline.theme.BATTERY_LOW_BG
+            fg = self.powerline.theme.BATTERY_LOW_FG
+            elif cap < warn_threshold and > low_threshold:
+                pwr_fmt = pwr_cap + u" \uf243 "
+                bg = self.powerline.theme.BATTERY_WARN_BG
+                fg = self.powerline.theme.BATTERY_WARN_FG
+            elif cap < int(50) and > int(20)
+            pwr_fmt = pwr_cap + u" \uf242 "
+            bg = self.powerline.theme.BATTERY_NORMAL_BG
+            fg = self.powerline.theme.BATTERY_NORMAL_FG
+        elif cap < int(75) and > int(50)
+        pwr_fmt = pwr_cap + u" \uf241 "
+        bg = self.powerline.theme.BATTERY_NORMAL_BG
+        fg = self.powerline.theme.BATTERY_NORMAL_FG
+
+    else:
+    pwr_fmt = pwr_cap + u" \uf240 "
+    bg = self.powerline.theme.BATTERY_NORMAL_BG
+    fg = self.powerline.theme.BATTERY_NORMAL_FG
         self.powerline.append(pwr_fmt.format(cap=cap), fg, bg)
-        #return pwr_fmt.format(cap=cap)
+        # return pwr_fmt.format(cap=cap)

@@ -39,10 +39,10 @@ def build_stats():
                              env=get_subprocess_env())
     except OSError:
         # Popen will throw an OSError if bzr is not found
-        return (None, None)
+        return None, None
     pdata = p.communicate()
     if p.returncode != 0:
-        return (None, None)
+        return None, None
     status = _get_bzr_status(pdata)
     stats = parse_bzr_stats(status)
     branch = _get_bzr_branch()

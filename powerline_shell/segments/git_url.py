@@ -8,12 +8,13 @@ try:
 except ImportError:
     which = lambda f: (lambda fp: os.path.exists(fp) and fp)(os.path.join('/usr/bin', f))
 
+
 def get_git_url():
     if which('git'):
         try:
             p = subprocess.Popen(['git', 'config', '--get', 'remote.origin.url'],
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                             env=get_git_subprocess_env())
+                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                 env=get_git_subprocess_env())
         except OSError:
             # Popen will throw an OSError if git is not found
             return 0

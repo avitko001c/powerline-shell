@@ -18,33 +18,34 @@ light3 = 248
 light4 = 246
 light5 = 255
 
-dark_gray  = 245
+dark_gray = 245
 light_gray = 244
 
-neutral_red    = 124
-neutral_green  = 106
+neutral_red = 124
+neutral_green = 106
 neutral_orange = 166
 neutral_yellow = 172
-neutral_blue   = 66
+neutral_blue = 66
 neutral_purple = 132
-neutral_aqua   = 72
+neutral_aqua = 72
 
 bright_blueish = 159
-bright_red     = 167
-bright_green   = 142
-bright_yellow  = 214
-bright_blue    = 109
-bright_purple  = 175
-bright_aqua    = 108
-bright_orange  = 208
+bright_red = 167
+bright_green = 142
+bright_yellow = 214
+bright_blue = 109
+bright_purple = 175
+bright_aqua = 108
+bright_orange = 208
 
-faded_red    = 88
-faded_green  = 100
+faded_red = 88
+faded_green = 100
 faded_yellow = 136
-faded_blue   = 24
+faded_blue = 24
 faded_purple = 96
-faded_aqua   = 66
+faded_aqua = 66
 faded_orange = 130
+
 
 class Color(DefaultColor):
     USERNAME_ROOT_BG = faded_red
@@ -160,5 +161,5 @@ class Color(DefaultColor):
             'network': u'\uE0A2',
             'separator': u'\uE0D1',
             'separator_thin': u'\uF105'
-            }
+        }
     }

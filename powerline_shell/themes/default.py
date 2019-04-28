@@ -18,8 +18,8 @@ class DefaultColor(object):
     HOME_SPECIAL_DISPLAY = True
     HOME_BG = 31  # blueish
     HOME_FG = 15  # white
-    PATH_BG = 237 # dark grey
-    PATH_FG = 250 # light grey
+    PATH_BG = 237  # dark grey
+    PATH_FG = 250  # light grey
     CWD_FG = 254  # nearly-white grey
     SEPARATOR_FG = 244
 
@@ -79,8 +79,6 @@ class DefaultColor(object):
     AWS_REGION_FG = 35
     AWS_REGION_BG = 237
 
-
-
     KUBECONFIG_PATH_FG = 39
     KUBECONFIG_PATH_BG = 238
 
@@ -100,8 +98,9 @@ class DefaultColor(object):
     PRIVATE_IP_BG = 18
     PRIVATE_IP_OFFLINE = 124
 
-    PLATFORM_FG = 254
+    PLATFORM_BG = 254
     PLATFORM_FG = 124
+
 
 class Color(DefaultColor):
     """

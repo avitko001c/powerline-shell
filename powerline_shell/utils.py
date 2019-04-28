@@ -11,11 +11,14 @@ py3 = sys.version_info[0] == 3
 if py3:
     def unicode_(x):
         return str(x)
+
+
     def decode(x):
         return x.decode(get_preferred_output_encoding())
 else:
     unicode_ = unicode
     decode = unicode
+
 
 class RepoStats(object):
     symbols = {
@@ -27,8 +30,8 @@ class RepoStats(object):
         'new': u'\uf067',
         'conflicted': u'\u273C',
         'stash': u'\u2398',
-        #'git': u'\ufb2b',
-        #'git': u'\uf126',
+        # 'git': u'\ufb2b',
+        # 'git': u'\uf126',
         'git': u'\ue0a0',
         'git-name': u'\ue717',
         'hg': u'\u263F',
@@ -45,16 +48,16 @@ class RepoStats(object):
         self.changed = changed
         self.staged = staged
         self.conflicted = conflicted
-        #print(self.symbols)
+        # print(self.symbols)
 
     def __eq__(self, other):
         return (
-            self.ahead == other.ahead and
-            self.behind == other.behind and
-            self.new == other.new and
-            self.changed == other.changed and
-            self.staged == other.staged and
-            self.conflicted == other.conflicted
+                self.ahead == other.ahead and
+                self.behind == other.behind and
+                self.new == other.new and
+                self.changed == other.changed and
+                self.staged == other.staged and
+                self.conflicted == other.conflicted
         )
 
     @property
@@ -88,6 +91,7 @@ class RepoStats(object):
             if self[_key]:
                 s = u" {}{} ".format(self.n_or_empty(_key), self.symbols[_key])
                 powerline.append(s, fg, bg)
+
         color = powerline.theme
         add('ahead', color.GIT_AHEAD_FG, color.GIT_AHEAD_BG)
         add('behind', color.GIT_BEHIND_FG, color.GIT_BEHIND_BG)
@@ -95,6 +99,7 @@ class RepoStats(object):
         add('changed', color.GIT_NOTSTAGED_FG, color.GIT_NOTSTAGED_BG)
         add('new', color.GIT_UNTRACKED_FG, color.GIT_UNTRACKED_BG)
         add('conflicted', color.GIT_CONFLICTED_FG, color.GIT_CONFLICTED_BG)
+
 
 def set_logger(loglevel, logname):
     log_format = '%(asctime)s:%(levelname)s:%(message)s'
@@ -122,31 +127,38 @@ def set_logger(loglevel, logname):
     logger.setLevel(level)
     logger.addHandler(console)
     eventlog = EventLogger(logger, logname)
-    return(eventlog)
+    return eventlog
+
 
 def critical(msg):
     eventlog = set_logger("critical", 'powerline-shell')
     eventlog.critical('[powerline-shell] {0}', msg)
 
+
 def exception(msg):
     eventlog = set_logger("exception", 'powerline-shell')
     eventlog.exception('[powerline-shell] {0}', msg)
+
 
 def error(msg):
     eventlog = set_logger("error", 'powerline-shell')
     eventlog.error('[powerline-shell] {0}', msg)
 
+
 def debug(msg):
     eventlog = set_logger("debug", 'powerline-shell')
     eventlog.debug('[powerline-shell] {0}', msg)
+
 
 def info(msg):
     eventlog = set_logger("info", 'powerline-shell')
     eventlog.info('[powerline-shell] {0}', msg)
 
+
 def warn(msg):
     eventlog = set_logger("warning", 'powerline-shell')
     eventlog.warn('[powerline-shell] {0}', msg)
+
 
 class EventLogger(object):
     from powerline_shell.unicode import safe_unicode
@@ -169,45 +181,46 @@ class EventLogger(object):
     '''
 
     def __init__(self, logger, ext):
-            self.logger = logger
-            self.ext = ext
-            self.prefix = ''
-            self.last_msgs = {}
+        self.logger = logger
+        self.ext = ext
+        self.prefix = ''
+        self.last_msgs = {}
 
     def _log(self, attr, msg, *args, **kwargs):
-            prefix = kwargs.get('prefix') or self.prefix
-            prefix = self.ext + ((':' + prefix) if prefix else '')
-            msg = safe_unicode(msg)
-            if args or kwargs:
-                    args = [safe_unicode(s) if isinstance(s, bytes) else s for s in args]
-                    kwargs = dict((
-                            (k, safe_unicode(v) if isinstance(v, bytes) else v)
-                            for k, v in kwargs.items()
-                    ))
-                    msg = msg.format(*args, **kwargs)
-            msg = prefix + ':' + msg
-            key = attr + ':' + prefix
-            if msg != self.last_msgs.get(key):
-                    getattr(self.logger, attr)(msg)
-                    self.last_msgs[key] = msg
+        prefix = kwargs.get('prefix') or self.prefix
+        prefix = self.ext + ((':' + prefix) if prefix else '')
+        msg = safe_unicode(msg)
+        if args or kwargs:
+            args = [safe_unicode(s) if isinstance(s, bytes) else s for s in args]
+            kwargs = dict((
+                (k, safe_unicode(v) if isinstance(v, bytes) else v)
+                for k, v in kwargs.items()
+            ))
+            msg = msg.format(*args, **kwargs)
+        msg = prefix + ':' + msg
+        key = attr + ':' + prefix
+        if msg != self.last_msgs.get(key):
+            getattr(self.logger, attr)(msg)
+            self.last_msgs[key] = msg
 
     def critical(self, msg, *args, **kwargs):
-            self._log('critical', msg, *args, **kwargs)
+        self._log('critical', msg, *args, **kwargs)
 
     def exception(self, msg, *args, **kwargs):
-            self._log('exception', msg, *args, **kwargs)
+        self._log('exception', msg, *args, **kwargs)
 
     def info(self, msg, *args, **kwargs):
-            self._log('info', msg, *args, **kwargs)
+        self._log('info', msg, *args, **kwargs)
 
     def error(self, msg, *args, **kwargs):
-            self._log('error', msg, *args, **kwargs)
+        self._log('error', msg, *args, **kwargs)
 
     def warn(self, msg, *args, **kwargs):
-            self._log('warning', msg, *args, **kwargs)
+        self._log('warning', msg, *args, **kwargs)
 
     def debug(self, msg, *args, **kwargs):
-            self._log('debug', msg, *args, **kwargs)
+        self._log('debug', msg, *args, **kwargs)
+
 
 class BasicSegment(object):
     def __init__(self, powerline, segment_def):
@@ -234,10 +247,16 @@ class BasicSegment(object):
 
     def warn(self, msg):
         eventlog = set_logger("warning", self.segment_def["type"])
-        eventlog.warn('[{0}] {1}', self.segment_def["type"],  msg)
+        eventlog.warn('[{0}] {1}', self.segment_def["type"], msg)
 
-    def get_brand_icon(self, brand):
-        self.icon = u(self.brands[brand])
+    def get_brand_icon(self, brand, padding=None):
+        if padding:
+            self.padding = self.add_spaces_left(padding)
+        self.icon = u(self.brands[brand] + self.padding if self.padding)
+
+    def add_spaces_left(self, amount):
+	return (' ' * amount)
+
 
 class ThreadedSegment(Thread, BasicSegment):
     def __init__(self, powerline, segment_def):
@@ -289,4 +308,3 @@ def get_git_subprocess_env():
     # LANG is specified to ensure git always uses a language we are expecting.
     # Otherwise we may be unable to parse the output.
     return get_subprocess_env(LANG="C")
-

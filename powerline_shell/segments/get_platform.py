@@ -3,7 +3,8 @@ from powerline_shell.utils import BasicSegment
 from powerline_shell.color_compliment import stringToHashToColorAndOpposite
 from powerline_shell.colortrans import rgb2short
 
-def get_cursor(version=None,prompt='\U0001F4BB '):
+
+def get_cursor(version=None, prompt='\U0001F4BB '):
     if version == 'Darwin':
         prompt = '\uf8ff'
     elif version == 'Linux':
@@ -14,6 +15,7 @@ def get_cursor(version=None,prompt='\U0001F4BB '):
         prompt = prompt
 
     return prompt
+
 
 class Segment(BasicSegment):
     def add_to_powerline(self):
@@ -36,9 +38,9 @@ class Segment(BasicSegment):
                              powerline.theme.PLATFORM_FG,
                              powerline.theme.PLATFORM_BG)
 
-#system = platform.system()
-#FG, BG = stringToHashToColorAndOpposite(system)
-#FG, BG = (rgb2short(*color) for color in [FG, BG])
-#system_prompt = "%s " % get_cursor(system)
+# system = platform.system()
+# FG, BG = stringToHashToColorAndOpposite(system)
+# FG, BG = (rgb2short(*color) for color in [FG, BG])
+# system_prompt = "%s " % get_cursor(system)
 
-#print(system_prompt, FG, BG)
+# print(system_prompt, FG, BG)

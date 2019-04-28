@@ -3,6 +3,7 @@ import subprocess
 from powerline_shell.utils import BasicSegment
 from powerline_shell.color_compliment import stringToHashToColorAndOpposite, rgb2short
 from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
+
 try:
     from shutil import wich  # Python-3.3 and later
 except ImportError:
@@ -15,7 +16,8 @@ class Segment(BasicSegment):
         self.prompt = None
         if which('ruby'):
             try:
-                output = subprocess.check_output(['ruby', '-v'], stderr=subprocess.STDOUT).decode(get_preferred_output_encoding())
+                output = subprocess.check_output(['ruby', '-v'], stderr=subprocess.STDOUT).decode(
+                    get_preferred_output_encoding())
                 self.version = output.split(' ')[1]
                 self.prompt = " {}{} ".format(self.logo, self.version)
             except OSError:

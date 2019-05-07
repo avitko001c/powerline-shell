@@ -1,7 +1,6 @@
 import os
-import sys
 from powerline_shell.utils import warn, py3, BasicSegment
-from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
+from powerline_shell.encoding import get_preferred_output_encoding
 
 ELLIPSIS = u'\u2026'
 

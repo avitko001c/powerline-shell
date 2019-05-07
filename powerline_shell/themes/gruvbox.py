@@ -133,31 +133,31 @@ class Color(DefaultColor):
 
     SYMBOLS = {
         "flames": {
-            "lock": u"\uE0A2",
+            "lock": u"\uf23e",
             "network": u"\uE0A1",
             "separator": u"\uE0C0 ",
             "separator_thin": u"\uE0b1"
         },
         'patched-blocks': {
-            'lock': u'\uE0A2',
+            "lock": u"\uf23e",
             'network': u'\uE0A1',
             'separator': u'\uE0CC',
             'separator_thin': u'\uE0B1'
         },
         'slanted': {
-            'lock': u'\uE0A2',
+            "lock": u"\uf23e",
             'network': u'\uE0A1',
             'separator': u'\u27B2',
             'separator_thin': u'\uE0B5'
         },
         'rounded': {
-            'lock': u'\uE0A2',
+            "lock": u"\uf23e",
             'network': u'\uE0A1',
             'separator': u'\uE0B4',
             'separator_thin': u'\uE0B5'
         },
         'lego-blocks': {
-            'lock': u'\uE0A2',
+            "lock": u"\uf23e",
             'network': u'\uE0A2',
             'separator': u'\uE0D1',
             'separator_thin': u'\uF105'

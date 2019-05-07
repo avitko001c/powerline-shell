@@ -30,8 +30,6 @@ class RepoStats(object):
         'new': u'\uf067',
         'conflicted': u'\u273C',
         'stash': u'\u2398',
-        # 'git': u'\ufb2b',
-        # 'git': u'\uf126',
         'git': u'\ue0a0',
         'git-name': u'\ue717',
         'hg': u'\u263F',
@@ -161,7 +159,6 @@ def warn(msg):
 
 
 class EventLogger(object):
-    from powerline_shell.unicode import safe_unicode
     '''Proxy class for logging.Logger instance
 
     It emits messages in format ``{ext}:{prefix}:{message}`` where
@@ -187,6 +184,7 @@ class EventLogger(object):
         self.last_msgs = {}
 
     def _log(self, attr, msg, *args, **kwargs):
+        from powerline_shell.unicode import safe_unicode
         prefix = kwargs.get('prefix') or self.prefix
         prefix = self.ext + ((':' + prefix) if prefix else '')
         msg = safe_unicode(msg)
@@ -255,13 +253,20 @@ class BasicSegment(object):
         self.icon = u(self.brands[brand] + self.padding if self.padding)
 
     def add_spaces_left(self, amount):
-	return (' ' * amount)
+	    return (' ' * amount)
+
+
+class BatteryStats(object):
+    def __init__(self, Threshold):
+        from powerline_shell.brandicons import Logo
+        self.threshold = Threshold
+        self.logos = logos
 
 
 class ThreadedSegment(Thread, BasicSegment):
     def __init__(self, powerline, segment_def):
-        from powerline_shell.brandicons import logos
         super(ThreadedSegment, self).__init__()
+        from powerline_shell.brandicons import logos
         self.powerline = powerline
         self.segment_def = segment_def  # type: dict
         self.symbols = powerline.symbols

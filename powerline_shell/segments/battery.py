@@ -8,9 +8,6 @@ try:
 except ImportError:
     which = lambda f: (lambda fp: os.path.exists(fp) and fp)(os.path.join('/usr/bin', f))
 
-class BatteryThreshold(object):
-    def __init__(self, Threshold):
-        self.threshold = Threshold
 
 class Segment(BasicSegment):
     def run(self):

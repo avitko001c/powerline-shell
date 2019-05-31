@@ -1,9 +1,9 @@
+#!/usr/bin/env python2.7
 from __future__ import print_function
 from builtins import chr
 from builtins import map
 from builtins import str
 from builtins import range
-#!/usr/bin/env python2.7
 import sys
 
 ESCAPE = chr(27)

@@ -222,11 +222,11 @@ class EventLogger(object):
 
 class BasicSegment(object):
     def __init__(self, powerline, segment_def):
-        from powerline_shell.brandicons import logos
+        from powerline_shell import symbols
+        self.logo = symbols
         self.powerline = powerline
         self.segment_def = segment_def  # type: dict
         self.symbols = powerline.symbols
-        self.logos = logos
 
     def start(self):
         pass
@@ -247,30 +247,24 @@ class BasicSegment(object):
         eventlog = set_logger("warning", self.segment_def["type"])
         eventlog.warn('[{0}] {1}', self.segment_def["type"], msg)
 
-    def get_brand_icon(self, brand, padding=None):
-        if padding:
-            self.padding = self.add_spaces_left(padding)
-        self.icon = u(self.brands[brand] + self.padding if self.padding)
-
     def add_spaces_left(self, amount):
 	    return (' ' * amount)
 
 
 class BatteryStats(object):
     def __init__(self, Threshold):
-        from powerline_shell.brandicons import Logo
+        from powerline_shell import symbols
         self.threshold = Threshold
-        self.logos = logos
 
 
 class ThreadedSegment(Thread, BasicSegment):
     def __init__(self, powerline, segment_def):
+        from powerline_shell import symbols
         super(ThreadedSegment, self).__init__()
-        from powerline_shell.brandicons import logos
+        self.logo = symbols
         self.powerline = powerline
         self.segment_def = segment_def  # type: dict
         self.symbols = powerline.symbols
-        self.logos = logos
 
 
 def import_file(module_name, path):

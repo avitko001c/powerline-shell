@@ -2,6 +2,8 @@ import os
 import re
 import runcmd
 from powerline_shell.utils import BasicSegment, warn
+from powerline_shell.symbols import *
+from powerline_shell.encoding import u
 
 try:
     from shutil import wich  # Python-3.3 and later
@@ -50,37 +52,53 @@ class Segment(BasicSegment):
         elif status == "Charging" or status == "Battery":
             pwr_fmt = u" {cap:d}% \ufba4 "
         else:
-            pwr_fmt = " {cap:d}% "
+            pwr_fmt = u" {cap:d}% "
 
-        if cap < self.powerline.segment_conf("battery", "low_threshold", 10):
+        low_threshold = self.powerline.segment_conf("battery", "low_threshold", 10)
+        warn_threshold =  self.powerline.segment_conf("battery", "warn_threshold", 20)
+        if cap <= low_threshold:
+            pwr_fmt = str(cap) + u(battery_ten.symbol)
             bg = self.powerline.theme.BATTERY_LOW_BG
             fg = self.powerline.theme.BATTERY_LOW_FG
-        elif cap < self.powerline.segment_conf("battery", "warn_threshold", 20):
+        elif cap > low_threshold and cap <= warn_threshold:
+            pwr_fmt = str(cap) + u(battery_twenty.symbol)
             bg = self.powerline.theme.BATTERY_WARN_BG
             fg = self.powerline.theme.BATTERY_WARN_FG
-        else:
+        elif cap > warn_threshold and cap <= int(30):
+            pwr_fmt = str(cap) + u(battery_thirty.symbol)
             bg = self.powerline.theme.BATTERY_NORMAL_BG
             fg = self.powerline.theme.BATTERY_NORMAL_FG
-        if cap < low_threshold and > int(5):
-            pwr_fmt = pwr_cap + u" \uf244 "
+        elif cap > int(30) and cap <= int(40):
+            pwr_fmt = str(cap) + u(battery_forty.symbol)
+            bg = self.powerline.theme.BATTERY_NORMAL_BG
+            fg = self.powerline.theme.BATTERY_NORMAL_FG
+        elif cap > int(40) and cap <= int(50):
+            pwr_fmt = str(cap) + u(battery_fifty.symbol)
+            bg = self.powerline.theme.BATTERY_NORMAL_BG
+            fg = self.powerline.theme.BATTERY_NORMAL_FG
+        elif cap > int(50) and cap <= int(60):
+            pwr_fmt = str(cap) + u(battery_sixty.symbol)
+            bg = self.powerline.theme.BATTERY_NORMAL_BG
+            fg = self.powerline.theme.BATTERY_NORMAL_FG
+        elif cap > int(50) and cap <= int(70):
+            pwr_fmt = str(cap) + u(battery_seventy.symbol)
+            bg = self.powerline.theme.BATTERY_NORMAL_BG
+            fg = self.powerline.theme.BATTERY_NORMAL_FG
+        elif cap > int(70) and cap <= int(80):
+            pwr_fmt = str(cap) + u(battery_seventy.symbol)
+            bg = self.powerline.theme.BATTERY_NORMAL_BG
+            fg = self.powerline.theme.BATTERY_NORMAL_FG
+        elif cap > int(80) and cap <= int(90):
+            pwr_fmt = str(cap) + u(battery_ninety.symbol)
+            bg = self.powerline.theme.BATTERY_NORMAL_BG
+            fg = self.powerline.theme.BATTERY_NORMAL_FG
+        elif cap > int(90) and cap <= int(100):
+            pwr_fmt = str(cap) + u(battery_hundred.symbol)
+            bg = self.powerline.theme.BATTERY_NORMAL_BG
+            fg = self.powerline.theme.BATTERY_NORMAL_FG
+        elif not isinstance(cap, int):
+            pwr_fmt = str(cap) + u(battery_error.symbol)
             bg = self.powerline.theme.BATTERY_LOW_BG
             fg = self.powerline.theme.BATTERY_LOW_FG
-            elif cap < warn_threshold and > low_threshold:
-                pwr_fmt = pwr_cap + u" \uf243 "
-                bg = self.powerline.theme.BATTERY_WARN_BG
-                fg = self.powerline.theme.BATTERY_WARN_FG
-            elif cap < int(50) and > int(20)
-            pwr_fmt = pwr_cap + u" \uf242 "
-            bg = self.powerline.theme.BATTERY_NORMAL_BG
-            fg = self.powerline.theme.BATTERY_NORMAL_FG
-        elif cap < int(75) and > int(50)
-        pwr_fmt = pwr_cap + u" \uf241 "
-        bg = self.powerline.theme.BATTERY_NORMAL_BG
-        fg = self.powerline.theme.BATTERY_NORMAL_FG
 
-    else:
-    pwr_fmt = pwr_cap + u" \uf240 "
-    bg = self.powerline.theme.BATTERY_NORMAL_BG
-    fg = self.powerline.theme.BATTERY_NORMAL_FG
         self.powerline.append(pwr_fmt.format(cap=cap), fg, bg)
-        # return pwr_fmt.format(cap=cap)

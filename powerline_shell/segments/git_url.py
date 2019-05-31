@@ -1,7 +1,8 @@
 import os
 import subprocess
+from powerline_shell.symbols import *
 from powerline_shell.utils import RepoStats, ThreadedSegment, get_git_subprocess_env
-from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding, u
+from powerline_shell.encoding import get_preferred_output_encoding, u
 
 try:
     from shutil import wich  # Python-3.3 and later
@@ -30,11 +31,11 @@ def get_git_url():
 class Segment(ThreadedSegment):
     def run(self):
         self.git_url = get_git_url()
-        self.logo = u(self.logos['git'])
+        self.logo = u(git.symbol)
         if 'bitbucket' in str(self.git_url):
-            self.logo = u(self.logos['bitbucket'])
+            self.logo = u(bitbucket.symbol)
         elif 'github' in str(self.git_url):
-            self.logo = u(self.logos['github'])
+            self.logo = u(github.symbol)
 
     def add_to_powerline(self):
         self.join()

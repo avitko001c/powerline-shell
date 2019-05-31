@@ -1,11 +1,12 @@
 import subprocess
+from powerline_shell.symbols import *
 from powerline_shell.utils import ThreadedSegment, decode
 from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding, u
 from shutil import which
 
 class Segment(ThreadedSegment):
     def add_to_powerline(self):
-        self.logo = u(self.logos['kubernetes'])
+        self.logo = u(kubernetes.symbol)
         kube_env = None
         if which('kubectl'):
             try:

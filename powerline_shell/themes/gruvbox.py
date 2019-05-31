@@ -1,4 +1,6 @@
 from powerline_shell.themes.default import DefaultColor
+from powerline_shell.symbols import *
+from powerline_shell.encoding import u
 
 """
 absolute colors based on
@@ -133,33 +135,33 @@ class Color(DefaultColor):
 
     SYMBOLS = {
         "flames": {
-            "lock": u"\uf23e",
-            "network": u"\uE0A1",
-            "separator": u"\uE0C0 ",
-            "separator_thin": u"\uE0b1"
+            "lock": u(lock.symbol),
+            "network": u(network.symbol),
+            "separator": u(separator_flames.symbol),
+            "separator_thin": u(separator_thin_flames.symbol)
         },
         'patched-blocks': {
-            "lock": u"\uf23e",
-            'network': u'\uE0A1',
-            'separator': u'\uE0CC',
-            'separator_thin': u'\uE0B1'
+            "lock": u(lock.symbol),
+            "network": u(network.symbol),
+            'separator': u(separator_patched.symbol),
+            'separator_thin': u(separator_thin_patched.symbol)
         },
         'slanted': {
-            "lock": u"\uf23e",
-            'network': u'\uE0A1',
-            'separator': u'\u27B2',
-            'separator_thin': u'\uE0B5'
+            "lock": u(lock.symbol),
+            "network": u(network.symbol),
+            'separator': u(separator_slanted.symbol),
+            'separator_thin': u(separator_thin_slanted.symbol)
         },
         'rounded': {
-            "lock": u"\uf23e",
-            'network': u'\uE0A1',
-            'separator': u'\uE0B4',
-            'separator_thin': u'\uE0B5'
+            "lock": u(lock.symbol),
+            "network": u(network.symbol),
+            'separator': u(separator_rounded.symbol),
+            'separator_thin': u(separator_thin_rounded.symbol
         },
         'lego-blocks': {
-            "lock": u"\uf23e",
-            'network': u'\uE0A2',
-            'separator': u'\uE0D1',
-            'separator_thin': u'\uF105'
+            "lock": u(lock.symbol),
+            "network": u(network.symbol),
+            'separator': u(separator_lego.symbol),
+            'separator_thin': u(separator_thin_lego.symbol)
         }
     }

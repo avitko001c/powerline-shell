@@ -1,5 +1,6 @@
 import os
 import subprocess
+from powerline_shell.symbols import *
 from powerline_shell.utils import ThreadedSegment, decode
 from powerline_shell.color_compliment import stringToHashToColorAndOpposite, rgb2short
 from powerline_shell.encoding import u
@@ -12,7 +13,7 @@ except ImportError:
 
 class Segment(ThreadedSegment):
     def run(self):
-        self.logo = u(self.logos['python'])
+        self.logo = u(python.symbol)
         self.version = None
         try:
             if which('python'):

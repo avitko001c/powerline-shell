@@ -1260,6 +1260,7 @@ icons = {
   'untappd': '\uf405',                              # 
   'upload': '\uf093',                               # 
   'ups': '\uf7e0',                                  # 
+  'url': '\uf116'                                   # 
   'usb': '\uf287',                                  # 
   'user': '\uf007',                                 # 
   'user-alt': '\uf406',                             # 

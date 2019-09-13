@@ -1,11 +1,10 @@
 import unittest
 import mock
-import sh
 import powerline_shell.segments.private_ip as private_ip
-from powerline_shell.utils import RepoStats
 from ..testing_utils import dict_side_effect_fn
 
 
+# noinspection PyArgumentList
 class PrivateIp(unittest.TestCase):
 
     def setUp(self):

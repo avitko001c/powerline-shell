@@ -7,7 +7,6 @@ import powerline_shell.segments.hg as hg
 from powerline_shell.utils import RepoStats
 from ..testing_utils import dict_side_effect_fn
 
-
 test_cases = {
     "? new-file": RepoStats(new=1),
     "M modified-file": RepoStats(changed=1),
@@ -15,6 +14,16 @@ test_cases = {
     "! missing-file": RepoStats(changed=1),
     "A added-file": RepoStats(staged=1),
 }
+
+
+def _checkout_new_branch(branch):
+    sh.hg("branch", branch)
+
+
+def _add_and_commit(filename):
+    sh.touch(filename)
+    sh.hg("add", filename)
+    sh.hg("commit", "-m", "add file " + filename)
 
 
 class HgTest(unittest.TestCase):
@@ -34,17 +43,9 @@ class HgTest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.dirname)
 
-    def _add_and_commit(self, filename):
-        sh.touch(filename)
-        sh.hg("add", filename)
-        sh.hg("commit", "-m", "add file " + filename)
-
-    def _checkout_new_branch(self, branch):
-        sh.hg("branch", branch)
-
     @mock.patch("powerline_shell.utils.get_PATH")
     def test_hg_not_installed(self, get_PATH):
-        get_PATH.return_value = "" # so hg can"t be found
+        get_PATH.return_value = ""  # so hg can"t be found
         self.segment.start()
         self.segment.add_to_powerline()
         self.assertEqual(self.powerline.append.call_count, 0)
@@ -56,14 +57,14 @@ class HgTest(unittest.TestCase):
         self.assertEqual(self.powerline.append.call_count, 0)
 
     def test_standard(self):
-        self._add_and_commit("foo")
+        _add_and_commit("foo")
         self.segment.start()
         self.segment.add_to_powerline()
         self.assertEqual(self.powerline.append.call_args[0][0], " default ")
 
     def test_different_branch(self):
-        self._add_and_commit("foo")
-        self._checkout_new_branch("bar")
+        _add_and_commit("foo")
+        _checkout_new_branch("bar")
         self.segment.start()
         self.segment.add_to_powerline()
         self.assertEqual(self.powerline.append.call_args[0][0], " bar ")

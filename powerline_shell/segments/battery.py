@@ -1,6 +1,6 @@
 import os
 import re
-import runcmd
+import powerline_shell.runcmd as runcmd
 from powerline_shell.utils import BasicSegment, warn
 from powerline_shell.symbols import *
 from powerline_shell.encoding import u

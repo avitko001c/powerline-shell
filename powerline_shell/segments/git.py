@@ -2,17 +2,20 @@ import re
 import os
 import subprocess
 from powerline_shell.utils import RepoStats, ThreadedSegment, get_git_subprocess_env
-from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
+from powerline_shell.encoding import get_preferred_output_encoding
 
 
 def parse_git_branch_info(status):
-    info = re.search('^## (?P<local>\S+?)''(\.{3}(?P<remote>\S+?)( \[(ahead (?P<ahead>\d+)(, )?)?(behind (?P<behind>\d+))?\])?)?$', status[0])
+    info = re.search(
+        '^## (?P<local>\S+?)''(\.{3}(?P<remote>\S+?)( \[(ahead (?P<ahead>\d+)(, )?)?(behind (?P<behind>\d+))?\])?)?$',
+        status[0])
     return info.groupdict() if info else None
 
 
 def _get_git_detached_branch():
-    p = subprocess.Popen(['git', 'describe', '--tags', '--always'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=get_git_subprocess_env())
-    #detached_ref = subprocess.check_output(['git', 'describe', '--tags', '--always'], env=get_git_subprocess_env()).decode(get_preferred_output_encoding()).rstrip('\n')
+    p = subprocess.Popen(['git', 'describe', '--tags', '--always'], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                         env=get_git_subprocess_env())
+    # detached_ref = subprocess.check_output(['git', 'describe', '--tags', '--always'], env=get_git_subprocess_env()).decode(get_preferred_output_encoding()).rstrip('\n')
     detached_ref = p.communicate()[0].decode(get_preferred_output_encoding()).rstrip('\n')
     if p.returncode == 0:
         branch = u'{} {}'.format(RepoStats.symbols['detached'], detached_ref)
@@ -44,27 +47,27 @@ def build_stats():
     path_list = list()
     git_status = False
     for p in os.getenv("PWD").split('/'):
-       path += p + '/'
-       path_list.append(path)
+        path += p + '/'
+        path_list.append(path)
     for i in path_list:
-       if os.path.isdir(i+".git"):
-           git_status = True
-           break
-       else:
-           pass
+        if os.path.isdir(i + ".git"):
+            git_status = True
+            break
+        else:
+            pass
     # Run thru getting stats unless we aren't in a git repo
     if git_status:
         try:
             p = subprocess.Popen(['git', 'status', '--porcelain', '-b'],
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                             env=get_git_subprocess_env())
+                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                 env=get_git_subprocess_env())
         except OSError:
             # Popen will throw an OSError if git is not found
-            return (None, None)
+            return None, None
 
         pdata = p.communicate()
         if p.returncode != 0:
-            return (None, None)
+            return None, None
 
         status = pdata[0].decode(get_preferred_output_encoding()).splitlines()
         stats = parse_git_stats(status)

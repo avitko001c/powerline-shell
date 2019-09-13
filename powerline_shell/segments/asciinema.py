@@ -1,6 +1,7 @@
 import os
 from powerline_shell.utils import BasicSegment
 
+
 class Segment(BasicSegment):
     def add_to_powerline(self):
         if os.getenv('ASCIINEMA_REC'):

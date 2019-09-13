@@ -53,6 +53,7 @@ def get_valid_cwd():
     if cwd != up:
         warn("Your current directory is invalid. Lowest valid directory: "
              + up)
+        cwd = up
     return cwd
 
 DEFAULT_SYMBOLS = {

@@ -1,5 +1,6 @@
 import os
 import subprocess
+from powerline_shell.symbols import *
 from powerline_shell.colortrans import rgb2short
 from powerline_shell.utils import ThreadedSegment, decode
 from powerline_shell.color_compliment import stringToHashToColorAndOpposite, rgb2short
@@ -13,7 +14,7 @@ except ImportError:
 
 class Segment(ThreadedSegment):
     def run(self):
-        self.logo = u(self.logos['ruby'])
+        self.logo = u(ruby.symbol)
         try:
             if which('ruby'):
                 self.version = decode(subprocess.check_output(["ruby", "-v"])).split()[1]

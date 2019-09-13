@@ -1,7 +1,6 @@
 import os
-import sys
 from powerline_shell.utils import warn, py3, BasicSegment
-from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
+from powerline_shell.encoding import get_preferred_output_encoding
 
 ELLIPSIS = u'\u2026'
 
@@ -28,7 +27,7 @@ def split_path_into_names(cwd):
 def requires_special_home_display(powerline, name):
     """Returns true if the given directory name matches the home indicator and
     the chosen theme should use a special home indicator display."""
-    return (name == '~' and powerline.theme.HOME_SPECIAL_DISPLAY)
+    return name == '~' and powerline.theme.HOME_SPECIAL_DISPLAY
 
 
 def maybe_shorten_name(powerline, name):
@@ -45,12 +44,12 @@ def get_fg_bg(powerline, name, is_last_dir):
     """Returns the foreground and background color to use for the given name.
     """
     if requires_special_home_display(powerline, name):
-        return (powerline.theme.HOME_FG, powerline.theme.HOME_BG,)
+        return powerline.theme.HOME_FG, powerline.theme.HOME_BG,
 
     if is_last_dir:
-        return (powerline.theme.CWD_FG, powerline.theme.PATH_BG,)
+        return powerline.theme.CWD_FG, powerline.theme.PATH_BG,
     else:
-        return (powerline.theme.PATH_FG, powerline.theme.PATH_BG,)
+        return powerline.theme.PATH_FG, powerline.theme.PATH_BG,
 
 
 def add_cwd_segment(powerline):
@@ -101,6 +100,7 @@ def add_cwd_segment(powerline):
         if not (is_last_dir and full_cwd):
             name = maybe_shorten_name(powerline, name)
         powerline.append(' %s ' % name, fg, bg, separator, separator_fg)
+
 
 class Segment(BasicSegment):
     def add_to_powerline(self):

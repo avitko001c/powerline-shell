@@ -6,7 +6,7 @@ from powerline_shell.utils import RepoStats, ThreadedSegment, get_subprocess_env
 def _get_fossil_branch():
     branches = os.popen("fossil branch 2>/dev/null").read().strip().split("\n")
     return ''.join([
-        i.replace('*','').strip()
+        i.replace('*', '').strip()
         for i in branches
         if i.startswith('*')
     ])
@@ -34,6 +34,7 @@ def _get_fossil_status():
     return status
 
 
+# noinspection PySimplifyBooleanCheck
 def build_stats():
     try:
         subprocess.Popen(['fossil'], stdout=subprocess.PIPE,
@@ -41,7 +42,7 @@ def build_stats():
                          env=get_subprocess_env()).communicate()
     except OSError:
         # Popen will throw an OSError if fossil is not found
-        return (None, None)
+        return None, None
     branch = _get_fossil_branch()
     if branch == "":
         return (None, None)

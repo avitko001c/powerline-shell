@@ -1,5 +1,6 @@
 import os
 import subprocess
+from powerline_shell.symbols import *
 from powerline_shell.utils import RepoStats, ThreadedSegment, get_git_subprocess_env
 from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding, u
 
@@ -8,12 +9,13 @@ try:
 except ImportError:
     which = lambda f: (lambda fp: os.path.exists(fp) and fp)(os.path.join('/usr/bin', f))
 
+
 def get_git_url():
     if which('git'):
         try:
             p = subprocess.Popen(['git', 'config', '--get', 'remote.origin.url'],
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                             env=get_git_subprocess_env())
+                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                 env=get_git_subprocess_env())
         except OSError:
             # Popen will throw an OSError if git is not found
             return 0
@@ -29,11 +31,11 @@ def get_git_url():
 class Segment(ThreadedSegment):
     def run(self):
         self.git_url = get_git_url()
-        self.logo = u(self.logos['git'])
+        self.logo = u(git.dump())
         if 'bitbucket' in str(self.git_url):
-            self.logo = u(self.logos['bitbucket'])
+            self.logo = u(bitbucket.dump())
         elif 'github' in str(self.git_url):
-            self.logo = u(self.logos['github'])
+            self.logo = u(github.dump())
 
     def add_to_powerline(self):
         self.join()

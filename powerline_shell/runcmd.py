@@ -7,20 +7,47 @@ import public
 
 
 @public.add
-class Process(object):
-    """Process class"""
+class Command(object):
+    """Command class"""
+    custom_popen_kwargs = None
     __readme__ = ["exc", "args", "code", "out", "err", "pid", "kill", "ok", "running", "__bool__"]
 
-    def __init__(self, process, background):
+    def __init__(self, _command, cwd=None, env=None, background=False, **popen_kwargs):
         code, out, err = None, "", ""
+        self.custom_popen_kwargs = dict(popen_kwargs)
+        if isinstance(_command, str):
+            self.command = _command.split()
+        elif isinstance(_command, list):
+            self.command = _command
+        kwargs = self.popen_kwargs
+        kwargs["cwd"] = cwd
+        if env:
+            kwargs["env"].update(env)
+        if background:
+            kwargs["stdout"] = open(os.devnull, 'wb')
+            kwargs["stderr"] = open(os.devnull, 'wb')
+        self.process = subprocess.Popen(self.command, **kwargs)
+        """Popen.args python3 only"""
+        self.process.args = _command
         if not background:
-            out, err = process.communicate()
-            code = process.returncode
-        self._args = process.args
+            out, err = self.process.communicate()
+            code = self.process.returncode
+        self._args = self.process.args
         self._out = out.rstrip()
         self._err = err.rstrip()
         self._code = code
-        self._pid = process.pid
+        self._pid = self.process.pid
+
+    def __bool__(self):
+        """return True if status code is 0"""
+        return self.ok
+
+    def __non_zero__(self):
+        """return True if status code is 0"""
+        return self.ok
+
+    def __str__(self):
+        return "<Process code=%s>" % self.code
 
     def exc(self):
         """raise OSError if status code is not 0. returns self"""
@@ -37,11 +64,6 @@ class Process(object):
         """deprecated"""
         return self.exc()
 
-    @property
-    def pid(self):
-        """return rocess pid"""
-        return self._pid
-
     def kill(self, signal=None):
         """kill process. return error string if error occured"""
         if self.running:
@@ -52,12 +74,17 @@ class Process(object):
                 return err.decode().rstrip()
 
     @property
+    def pid(self):
+        """return rocess pid"""
+        return self._pid
+
+    @property
     def args(self):
         """return arguments list"""
         return self._args
 
     @property
-    def code(self):
+    def exitcode(self):
         """return status code"""
         return self._code
 
@@ -92,23 +119,11 @@ class Process(object):
         except psutil._exceptions.NoSuchProcess:
             return False
 
-    def __bool__(self):
-        """return True if status code is 0"""
-        return self.ok
-
-    def __non_zero__(self):
-        """return True if status code is 0"""
-        return self.ok
-
-    def __str__(self):
-        return "<Process code=%s>" % self.code
-
-
-class Command(object):
-#    custom_popen_kwargs = None
-
-    def __init__(self, **popen_kwargs):
-        self.custom_popen_kwargs = dict(popen_kwargs)
+    @property
+    def popen_kwargs(self):
+        kwargs = self._default_popen_kwargs
+        kwargs.update(self.custom_popen_kwargs)
+        return kwargs
 
     @property
     def _default_popen_kwargs(self):
@@ -122,28 +137,3 @@ class Command(object):
             'bufsize': 0
         }
 
-    @property
-    def popen_kwargs(self):
-        kwargs = self._default_popen_kwargs
-        kwargs.update(self.custom_popen_kwargs)
-        return kwargs
-
-    def run(self, args, cwd=None, env=None, background=False):
-        args = list(map(str, args))
-        kwargs = self.popen_kwargs
-        kwargs["cwd"] = cwd
-        if env:
-            kwargs["env"].update(env)
-        if background:
-            kwargs["stdout"] = open(os.devnull, 'wb')
-            kwargs["stderr"] = open(os.devnull, 'wb')
-        process = subprocess.Popen(args, **kwargs)
-        """Popen.args python3 only"""
-        process.args = args
-        return Process(process, background)
-
-
-@public.add
-def run(args, cwd=None, background=False):
-    """run command and return Process object"""
-    return Command().run(args, cwd=cwd, background=background)

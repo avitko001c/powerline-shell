@@ -1,6 +1,5 @@
 import os
-import subprocess
-import powerline_shell.runcmd as runcmd
+from powerline_shell.runcmd import Command
 from powerline_shell.symbols import *
 from powerline_shell.utils import ThreadedSegment, decode
 from powerline_shell.color_compliment import stringToHashToColorAndOpposite, rgb2short
@@ -18,7 +17,7 @@ class Segment(ThreadedSegment):
         self.version = None
         try:
             if which('python'):
-                self.cmd = runcmd.run(["python", "--version"])
+                self.cmd = Command(["python", "--version"])
                 self.version = self.cmd.out.split()[1]
                 FG, nil = stringToHashToColorAndOpposite(self.version)
                 self.FG, self.nil = (rgb2short(*color) for color in [FG, nil])

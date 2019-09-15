@@ -1,6 +1,6 @@
 import os
-import subprocess
 from powerline_shell.symbols import *
+from powerline_shell.runcmd import Command
 from powerline_shell.colortrans import rgb2short
 from powerline_shell.utils import ThreadedSegment, decode
 from powerline_shell.color_compliment import stringToHashToColorAndOpposite, rgb2short
@@ -17,7 +17,7 @@ class Segment(ThreadedSegment):
         self.logo = u(ruby.symbol)
         try:
             if which('ruby'):
-                self.version = decode(subprocess.check_output(["ruby", "-v"])).split()[1]
+                self.version = Command(["ruby", "-v"])).out.split()[1]
                 try:
                     self.FG, self.BG = self.powerline.theme.RUBY_VERSION_FG, self.powerline.theme.RUBY_VERSION_BG
                 except:

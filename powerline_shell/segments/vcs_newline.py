@@ -1,17 +1,13 @@
-import subprocess
+from powerline_shell.runcmd import Command
 from git import Git
-from ..utils import RepoStats, ThreadedSegment, get_git_subprocess_env, warn
+from ..utils import ThreadedSegment, warn
 
 
 def get_vcs_dir():
-    git = Git()
-    hg_return_code = subprocess.Popen("hg status", shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                      stderr=subprocess.STDOUT)
-    hg_return_code.communicate()[0].strip()  # Blocks until 'git status' completes execution
-    svn_return_code = subprocess.Popen("svn info", shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                       stderr=subprocess.STDOUT)
-    svn_return_code.communicate()[0].strip()  # Blocks until 'git status' completes execution
-    if git.is_git_dir() or hg_return_code.returncode == 0 or svn_return_code.returncode == 0:
+    git = Git().is_git_dir()
+    hg_return_code = Command(['hg', 'status'])
+    svn_return_code = Command(['svn', 'info'])
+    if git or hg_return_code.exitcode == 0 or svn_return_code.exitcode == 0:
         return True
     else:
         return False
@@ -31,4 +27,4 @@ class Segment(ThreadedSegment):
         self.powerline.append("\n",
                               self.powerline.theme.RESET,
                               self.powerline.theme.RESET,
-                              separator="")
+                              separator=" ")

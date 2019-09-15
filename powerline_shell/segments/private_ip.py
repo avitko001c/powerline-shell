@@ -1,5 +1,5 @@
-import subprocess
 import re
+from powerline_shell.runcmd import Command
 from ..utils import ThreadedSegment
 
 
@@ -27,11 +27,10 @@ class PrivateIp:
     @staticmethod
     def strategy_ifconfig(interface, parser):
         try:
-            proc = subprocess.Popen(["ifconfig", interface],
-                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            proc = Command(["ifconfig", interface])
 
-            res, err = proc.communicate()
-            res = res.decode("utf-8").rstrip()
+            res = proc.out.strip()
+            err = proc.err
 
             return None if err else parser(res)
 
@@ -41,10 +40,8 @@ class PrivateIp:
     @staticmethod
     def strategy_hostname():
         try:
-            proc = subprocess.Popen(["hostname", "-i"],
-                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-            res, err = proc.communicate()
+            proc = Command(["hostname", "-i"])
+            res, err = proc.out
             res = res.decode("utf-8").rstrip()
 
             return None if err else res

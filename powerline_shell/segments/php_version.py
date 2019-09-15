@@ -1,4 +1,4 @@
-import subprocess
+from powerline_shell.runcmd import Command
 from powerline_shell.symbols import *
 from powerline_shell.utils import ThreadedSegment, decode
 from powerline_shell.encoding import u
@@ -8,10 +8,8 @@ class Segment(ThreadedSegment):
     def run(self):
         self.version = None
         try:
-            output = decode(
-                subprocess.check_output(['php', '-r', 'echo PHP_VERSION;'],
-                                        stderr=subprocess.STDOUT))
-            self.version = output.split('-')[0] if '-' in output else output
+            output = Command(['php', '-r', 'echo PHP_VERSION;'])
+            self.version = output.out.split('-')[0] if '-' in output else output
             self.logo = u(php.symbol)
         except OSError:
             self.version = None

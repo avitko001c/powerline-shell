@@ -1,6 +1,6 @@
 import os
 import re
-import powerline_shell.runcmd as runcmd
+from powerline_shell.runcmd import Command
 from powerline_shell.utils import BasicSegment, warn
 from powerline_shell.symbols import *
 from powerline_shell.encoding import u
@@ -33,7 +33,7 @@ class Segment(BasicSegment):
                 status = f.read().strip()
         elif which('pmset'):
             BATTERY_PERCENT_RE = re.compile(r'(\d+)%')
-            cmd = runcmd.run(['pmset', '-g', 'batt'])
+            cmd = Command(['pmset', '-g', 'batt'])
             battery_summary = cmd.out
             cap = int(BATTERY_PERCENT_RE.search(battery_summary).group(1))
             if 'AC' in battery_summary:

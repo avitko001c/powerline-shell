@@ -1,4 +1,4 @@
-import powerline_shell.runcmd as runcmd
+from powerline_shell.runcmd import Command
 from powerline_shell.symbols import *
 from powerline_shell.utils import ThreadedSegment, decode
 from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding, u
@@ -10,7 +10,7 @@ class Segment(ThreadedSegment):
         self.kube_env = None
         if which('kubectl'):
             try:
-                self.cmd = runcmd.run(['kubectl', 'config', 'current-context'])
+                self.cmd = Command(['kubectl', 'config', 'current-context'])
                 self.kube_env = self.cmd.out.rstrip()
             except:
                 raise Exception('k8s: Not set')

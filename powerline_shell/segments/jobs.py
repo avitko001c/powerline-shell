@@ -13,13 +13,13 @@ class Segment(ThreadedSegment):
             # cygwin ps is a special snowflake...
             output_proc = Command(['ps', '-af'])
             output = list(map(lambda l: int(l.split()[2].strip()),
-                              output_proc.out.splitlines()[1:]))
+                              output_proc.text.splitlines()[1:]))
             self.num_jobs = output.count(os.getppid()) - 1
         else:
             pppid_proc = Command(['ps', '-p', str(os.getppid()), '-oppid='])
-            pppid = pppid_proc.out.strip()
+            pppid = pppid_proc.out
             output_proc = Command(['ps', '-a', '-o', 'ppid'])
-            output = output_proc.out
+            output = output_proc.text
             self.num_jobs = len(re.findall(str(pppid), output)) - 1
 
     def add_to_powerline(self):

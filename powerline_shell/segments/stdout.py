@@ -5,8 +5,8 @@ from powerline_shell.encoding import get_preferred_output_encoding, get_preferre
 
 class Segment(ThreadedSegment):
     def run(self):
-        cmd = self.segment_def["command"]
-        self.output = Command(cmd).strip()
+        cmd = Command(self.segment_def["command"])
+        self.output = cmd.out
         # TODO handle OSError
         # TODO handle no command defined or malformed
 

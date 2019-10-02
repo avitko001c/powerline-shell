@@ -18,7 +18,7 @@ class Segment(ThreadedSegment):
         try:
             if which('python'):
                 self.cmd = Command(["python", "--version"])
-                self.version = self.cmd.out.split()[1]
+                self.version = self.cmd.out[1]
                 FG, nil = stringToHashToColorAndOpposite(self.version)
                 self.FG, self.nil = (rgb2short(*color) for color in [FG, nil])
                 self.FG += 32

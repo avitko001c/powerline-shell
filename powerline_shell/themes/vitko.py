@@ -19,7 +19,7 @@ light4 = 246
 light5 = 255
 
 
-vitko_gray = 272a33
+vitko_gray = 272
 dark_gray  = 245
 light_gray = 244
 
@@ -125,3 +125,19 @@ class Color(DefaultColor):
     PRIVATE_IP_FG = 148
     PRIVATE_IP_BG = dark1
     PRIVATE_IP_OFFLINE = neutral_red
+
+    SYMBOLS = {
+        "flames": {
+            "lock": u"\uE0A2",
+            "network": u"\uE0A1",
+            "separator": u"\uE0C0 ",
+            "separator_thin": u"\uE0b1"
+        },
+        'patched-blocks': {
+            'lock': u'\uE0A2',
+            'network': u'\uE0A2',
+            'separator': u'\uE0cd',
+            'separator_thin': u'\uE0cc'
+        }
+
+    }

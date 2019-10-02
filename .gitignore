@@ -13,3 +13,5 @@ uninstall.txt
 *sublime*
 .pytest_cache
 __pycache__
+.idea
+/powerline-shell/

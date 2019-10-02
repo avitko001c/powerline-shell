@@ -1,3 +1,5 @@
+from powerline_shell.themes.default import DefaultColor
+
 class Color(DefaultColor):
     USERNAME_FG = 250
     #USERNAME_BG = 240

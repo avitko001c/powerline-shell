@@ -1,0 +1,18 @@
+{
+  "segments": [
+    "virtual_env",
+    "username",
+    "battery",
+    "hostname",
+    "beat",
+    "ssh",
+    "newline",
+    "cwd",
+    "git_cmd",
+    "hg",
+    "jobs",
+    "root"
+  ],
+ "theme": "vitko",
+ "mode": "flames"
+}

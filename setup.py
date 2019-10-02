@@ -23,7 +23,7 @@ setup(
         "powerline_shell.themes",
     ],
     install_requires=[
-        "argparse", 'runcmd', 'mock', 'parameterized', 'sh'
+        "argparse", 'mock', 'parameterized', 'sh', 'peewee'
     ],
     entry_points="""
     [console_scripts]

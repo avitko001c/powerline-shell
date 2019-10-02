@@ -29,7 +29,7 @@ class PrivateIp:
         try:
             proc = Command(["ifconfig", interface])
 
-            res = proc.out.strip()
+            res = proc.out
             err = proc.err
 
             return None if err else parser(res)
@@ -41,7 +41,7 @@ class PrivateIp:
     def strategy_hostname():
         try:
             proc = Command(["hostname", "-i"])
-            res, err = proc.out
+            res, err = proc.text
             res = res.decode("utf-8").rstrip()
 
             return None if err else res

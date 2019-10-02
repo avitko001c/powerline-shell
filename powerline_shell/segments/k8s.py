@@ -11,7 +11,7 @@ class Segment(ThreadedSegment):
         if which('kubectl'):
             try:
                 self.cmd = Command(['kubectl', 'config', 'current-context'])
-                self.kube_env = self.cmd.out.rstrip()
+                self.kube_env = self.cmd.text.rstrip()
             except:
                 raise Exception('k8s: Not set')
 

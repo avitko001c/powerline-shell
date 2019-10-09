@@ -9,7 +9,7 @@ class Segment(ThreadedSegment):
         self.version = None
         try:
             output = Command(['php', '-r', 'echo PHP_VERSION;'])
-            self.version = output.text.split('-')[0] if '-' in output.text else output.text
+            self.version = output.out.split('-')[0] if '-' in output else output
             self.logo = u(php.symbol)
         except OSError:
             self.version = None

@@ -1,7 +1,6 @@
 import os
 import re
-from powerline_shell.runcmd import Command
-from powerline_shell.utils import BasicSegment, warn
+from powerline_shell.utils import BasicSegment, warn, Command
 from powerline_shell.symbols import *
 from powerline_shell.encoding import u
 
@@ -65,6 +64,8 @@ class Segment(BasicSegment):
 
         low_threshold = self.powerline.segment_conf("battery", "low_threshold", 10)
         warn_threshold =  self.powerline.segment_conf("battery", "warn_threshold", 20)
+        bg = self.powerline.theme.BATTERY_NORMAL_BG
+        fg = self.powerline.theme.BATTERY_NORMAL_FG
         if source == 'discharging':
             if cap <= low_threshold:
                 pwr_fmt = str(' ') + str(cap) + u(battery_ten.dump(1))
@@ -114,5 +115,6 @@ class Segment(BasicSegment):
             pwr_fmt = str(' ') + str(cap) + u(battery_error.dump(1))
             bg = self.powerline.theme.BATTERY_LOW_BG
             fg = self.powerline.theme.BATTERY_LOW_FG
+           
 
         self.powerline.append(pwr_fmt.format(cap=cap), fg, bg)

@@ -1,24 +1,29 @@
+import os
 from powerline_shell.runcmd import Command
 from git import Git
-from ..utils import ThreadedSegment, warn
+from powerline_shell.utils import ThreadedSegment, warn
 
 
 def get_vcs_dir():
-    git = Git().is_git_dir()
-    hg_return_code = Command(['hg', 'status'])
-    svn_return_code = Command(['svn', 'info'])
-    if git or hg_return_code.exitcode == 0 or svn_return_code.exitcode == 0:
+    git = Git(os.getcwd()).is_git_dir()
+    try:
+        hg_return_code = Command(['hg', 'status']).exitcode
+    except:
+        hg_return_code = 1
+    try:
+        svn_return_code = Command(['svn', 'info']).exitcode
+    except:
+        svn_return_code = 1
+    if git or hg_return_code == 0 or svn_return_code == 0:
         return True
     else:
         return False
 
 
 class Segment(ThreadedSegment):
-    def run(self):
-        self.in_vcs_dir = get_vcs_dir()
-
     def add_to_powerline(self):
         self.join()
+        self.in_vcs_dir = get_vcs_dir()
         if not self.in_vcs_dir:
             return
         if self.powerline.args.shell == "tcsh":
@@ -27,4 +32,4 @@ class Segment(ThreadedSegment):
         self.powerline.append("\n",
                               self.powerline.theme.RESET,
                               self.powerline.theme.RESET,
-                              separator=" ")
+                              separator="")

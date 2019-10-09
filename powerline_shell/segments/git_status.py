@@ -4,9 +4,8 @@ import os
 import re
 import string
 from subprocess import PIPE, Popen
-
-from powerline.segments import Segment, with_docstring
-from powerline.theme import requires_segment_info
+from powerline_shell.power.segments import Segment, with_docstring
+from powerline_shell.power.theme import requires_segment_info
 
 
 def build_segments(formats, branch, detached, tag, behind, ahead, staged, unmerged, changed, untracked, stashed):

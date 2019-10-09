@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# -* coding: utf-8 -*-
 import os
 import sys
 import traceback
@@ -8,9 +8,8 @@ import psutil
 import public
 from shutil import which
 
-class CommandNotFound(Exception):
+class CommandNotFound(OSError):
     ''' Raise when the command entered is not found '''
-    pass
 
 @public.add
 class Command(object):
@@ -36,32 +35,14 @@ class Command(object):
             self.kwargs["stdout"] = open(os.devnull, 'wb')
             self.kwargs["stderr"] = open(os.devnull, 'wb')
         self.run
-        #self.process = subprocess.Popen(self.command, **self.kwargs)
-        #"""Popen.args python3 only"""
-        #self.process.args = _command
-        #if not self.background:
-        #    self._out, self._err = self.process.communicate()
-        #    self.code = self.process.returncode
-        #self._args = self.process.args
-        #self._out = self._out.rstrip()
-        #self._err = self._err.rstrip()
-        #self._code = self.code
-        #self._pid = self.process.pid
 
     @property
     def run(self):
         self.code, self._out, self._err = None, "", ""
-        try:
-                self.valid = which(self.command[0])
-                if not self.valid:
-                    msg = "CommandNotFoundError: [Errno 2] Command not found: {}: {}".format(self.command[0], self.command)
-                    raise CommandNotFound(msg)
-        except CommandNotFound as e:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            self._out = str(e).split()
-            self._err = exc_value
-            self.code = exc_value
-            return traceback.print_exception(exc_type, exc_value, e.__traceback__)
+        self.valid = which(self.command[0])
+        if not self.valid:
+            msg = "CommandNotFoundError: [Errno 2] Command not found: {}: args: {}".format(self.command[0], self.command[1:])
+            raise CommandNotFound(msg)
         self.process = subprocess.Popen(self.command, **self.kwargs)
         self.process.args = self.command
         if not self.background:
@@ -111,6 +92,7 @@ class Command(object):
 
     def rerun(self):
         self.run
+        return self.out
 
     @property
     def pid(self):
@@ -182,4 +164,3 @@ class Command(object):
             'universal_newlines': True,
             'bufsize': 0
         }
-

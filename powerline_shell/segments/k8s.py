@@ -2,7 +2,11 @@ from powerline_shell.runcmd import Command
 from powerline_shell.symbols import *
 from powerline_shell.utils import ThreadedSegment, decode
 from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding, u
-from shutil import which
+try:
+   from shutil import which
+except ImportError:
+   from subprocess import check_output
+   which = lambda x: check_output(['which', x]).decode('utf-8').strip('\n')
 
 class Segment(ThreadedSegment):
     def add_to_powerline(self):
@@ -11,7 +15,7 @@ class Segment(ThreadedSegment):
         if which('kubectl'):
             try:
                 self.cmd = Command(['kubectl', 'config', 'current-context'])
-                self.kube_env = self.cmd.text.rstrip()
+                self.kube_env = self.cmd.out.rstrip()
             except:
                 raise Exception('k8s: Not set')
 

@@ -9,10 +9,10 @@ except ImportError:
    which = lambda x: check_output(['which', x]).decode('utf-8').strip('\n')
 try:
     from git import Git
-    git = lambda x: Git(['git'] + x)
+    git_cmd = lambda x: Git().config(x)
 except ImportError:
     git_executable = which('git')
-    git = lambda x: Command([git_executable] + x).text()
+    git_cmd = lambda x: Command([git_executable] + x).text
 
 def check_git_dir():
     git_dir = Git(os.getcwd()).is_git_dir()
@@ -21,9 +21,10 @@ def check_git_dir():
     return False
 
 def get_git_url():
-    git_url = git(['config', '--get', 'remote.origin.url'])
+    git_url = git_cmd(['--get', 'remote.origin.url'])
     if not git_url:
         return None
+    return git_url
 
 class Segment(ThreadedSegment):
     def run(self):

@@ -2,11 +2,14 @@
 # -* coding: utf-8 -*-
 import os
 import sys
-import traceback
 import subprocess
 import psutil
 import public
-from shutil import which
+try:
+   from shutil import which  # Python-3.3 and later
+except ImportError:
+   from subprocess import check_output
+   which = lambda x: check_output(['which', x]).decode('utf-8').strip('\n')
 
 class CommandNotFound(OSError):
     ''' Raise when the command entered is not found '''
@@ -55,6 +58,12 @@ class Command(object):
         self._pid = self.process.pid
         return self
 
+    def __call__(self):
+        """Setting the class call to output.  If just text is needed
+        Then issue the class self.text property
+        """
+        return self.rerun()
+
     def __bool__(self):
         """return True if status code is 0"""
         return self.ok
@@ -77,10 +86,6 @@ class Command(object):
             raise OSError("%s exited with code %s" % (self.args, self.code))
         return self
 
-    def _raise(self):
-        """deprecated"""
-        return self.exc()
-
     def kill(self, signal=None):
         """kill process. return error string if error occured"""
         if self.running:
@@ -91,8 +96,22 @@ class Command(object):
                 return err.decode().rstrip()
 
     def rerun(self):
+        if self.running:
+            self.kill('-9')
         self.run
         return self.out
+
+    @property
+    def _default_popen_kwargs(self):
+        return {
+            'env': os.environ.copy(),
+            'stdin': subprocess.PIPE,
+            'stdout': subprocess.PIPE,
+            'stderr': subprocess.PIPE,
+            'shell': False,
+            'universal_newlines': True,
+            'bufsize': 0
+        }
 
     @property
     def pid(self):
@@ -153,14 +172,3 @@ class Command(object):
         kwargs.update(self.custom_popen_kwargs)
         return kwargs
 
-    @property
-    def _default_popen_kwargs(self):
-        return {
-            'env': os.environ.copy(),
-            'stdin': subprocess.PIPE,
-            'stdout': subprocess.PIPE,
-            'stderr': subprocess.PIPE,
-            'shell': False,
-            'universal_newlines': True,
-            'bufsize': 0
-        }

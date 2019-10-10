@@ -1,5 +1,5 @@
 import re
-from powerline_shell.runcmd import Command
+from powerline_shell.utils import Command
 from ..utils import ThreadedSegment
 
 

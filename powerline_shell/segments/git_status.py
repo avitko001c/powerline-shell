@@ -4,8 +4,8 @@ import os
 import re
 import string
 from subprocess import PIPE, Popen
+from powerline_shell.utils import debug
 from powerline_shell.power.segments import Segment, with_docstring
-from powerline_shell.power.theme import requires_segment_info
 
 
 def build_segments(formats, branch, detached, tag, behind, ahead, staged, unmerged, changed, untracked, stashed):
@@ -98,13 +98,31 @@ def get_base_command(cwd, use_dash_c):
     return None
 
 
-@requires_segment_info
 class GitStatusSegment(Segment):
+    '''Return the status of a Git working copy.
+    It will show the branch-name, or the commit hash if in detached head state.
+    It will also show the number of commits behind, commits ahead, staged files,
+    unmerged files (conflicts), changed files, untracked files and stashed files
+    if that number is greater than zero.
+    :param bool use_dash_c:
+        Call git with ``-C``, which is more performant and accurate, but requires git 1.8.5 or higher.
+        Otherwise it will traverse the current working directory up towards the root until it finds a ``.git`` directory, then use ``--git-dir`` and ``--work-tree``.
+        True by default.
+    :param bool show_tag:
+        Show tag description. Valid options are``contains``, ``last``, ``annotated`` and ``exact``. A value of True behaves the same as ``exact``, which only displays a tag when it's assigned to the currently checked-out revision.
+        False by default, because it needs to execute git an additional time.
+    :param dict formats:
+        A string-to-string dictionary for customizing Git status formats. Valid keys include ``branch``, ``tag``, ``ahead``, ``behind``, ``staged``, ``unmerged``, ``changes``, ``untracked``, and ``stashed``.
+        Empty dictionary by default, which means the default formats are used.
+    :param detached_head_style:
+        Display style when in detached HEAD state. Valid values are ``revision``, which shows the current revision id, and ``ref``, which shows the closest reachable ref object.
+        The default is ``revision``.
+    Divider highlight group used: ``gitstatus:divider``.
+    Highlight groups used: ``gitstatus_branch_detached``, ``gitstatus_branch_dirty``, ``gitstatus_branch_clean``, ``gitstatus_branch``, ``gitstatus_tag``, ``gitstatus_behind``, ``gitstatus_ahead``, ``gitstatus_staged``, ``gitstatus_unmerged``, ``gitstatus_changed``, ``gitstatus_untracked``, ``gitstatus_stashed``, ``gitstatus``.
+    '''
 
     @staticmethod
-    def execute(pl, command):
-        pl.debug('Executing command: %s' % ' '.join(command))
-
+    def execute(command):
         git_env = os.environ.copy()
         git_env['LC_ALL'] = 'C'
 
@@ -112,18 +130,18 @@ class GitStatusSegment(Segment):
         out, err = [item.decode('utf-8') for item in proc.communicate()]
 
         if out:
-            pl.debug('Command output: %s' % out.strip(string.whitespace))
+            debug('Command output: %s' % out.strip(string.whitespace))
         if err:
-            pl.debug('Command errors: %s' % err.strip(string.whitespace))
+            debug('Command errors: %s' % err.strip(string.whitespace))
 
         return out.splitlines(), err.splitlines()
 
-    def __call__(self, pl, segment_info, use_dash_c=True, show_tag=False, formats=None, detached_head_style='revision'):
+    def __call__(self,  use_dash_c=True, show_tag=False, formats=None, detached_head_style='revision'):
         if formats is None:
             formats = {}
-        pl.debug('Running gitstatus %s -C' % ('with' if use_dash_c else 'without'))
+        debug('Running gitstatus %s -C' % ('with' if use_dash_c else 'without'))
 
-        cwd = segment_info['getcwd']()
+        cwd = os.getcwd()
 
         if not cwd:
             return
@@ -133,7 +151,7 @@ class GitStatusSegment(Segment):
         if not base:
             return
 
-        status, err = self.execute(pl, base + ['status', '--branch', '--porcelain'])
+        status, err = self.execute(base + ['status', '--branch', '--porcelain'])
 
         if err and ('error' in err[0] or 'fatal' in err[0]):
             return
@@ -145,24 +163,24 @@ class GitStatusSegment(Segment):
 
         if branch == 'HEAD':
             if detached_head_style == 'revision':
-                branch = self.execute(pl, base + ['rev-parse', '--short', 'HEAD'])[0][0]
+                branch = self.execute(base + ['rev-parse', '--short', 'HEAD'])[0][0]
             elif detached_head_style == 'ref':
-                branch = self.execute(pl, base + ['describe', '--contains', '--all'])[0][0]
+                branch = self.execute(base + ['describe', '--contains', '--all'])[0][0]
 
         staged, unmerged, changed, untracked = parse_status(status)
 
-        stashed = len(self.execute(pl, base + ['stash', 'list', '--no-decorate'])[0])
+        stashed = len(self.execute(base + ['stash', 'list', '--no-decorate'])[0])
 
         if not show_tag:
             tag, err = [''], False
         elif show_tag == 'contains':
-            tag, err = self.execute(pl, base + ['describe', '--contains'])
+            tag, err = self.execute(base + ['describe', '--contains'])
         elif show_tag == 'last':
-            tag, err = self.execute(pl, base + ['describe', '--tags'])
+            tag, err = self.execute(base + ['describe', '--tags'])
         elif show_tag == 'annotated':
-            tag, err = self.execute(pl, base + ['describe'])
+            tag, err = self.execute(base + ['describe'])
         else:
-            tag, err = self.execute(pl, base + ['describe', '--tags', '--exact-match', '--abbrev=0'])
+            tag, err = self.execute( base + ['describe', '--tags', '--exact-match', '--abbrev=0'])
 
         if err and ('error' in err[0] or 'fatal' in err[0] or 'Could not get sha1 for HEAD' in err[0]):
             tag = ''
@@ -172,25 +190,3 @@ class GitStatusSegment(Segment):
         return build_segments(formats, branch, detached, tag, behind, ahead, staged, unmerged, changed, untracked, stashed)
 
 
-gitstatus = with_docstring(GitStatusSegment(),
-'''Return the status of a Git working copy.
-It will show the branch-name, or the commit hash if in detached head state.
-It will also show the number of commits behind, commits ahead, staged files,
-unmerged files (conflicts), changed files, untracked files and stashed files
-if that number is greater than zero.
-:param bool use_dash_c:
-    Call git with ``-C``, which is more performant and accurate, but requires git 1.8.5 or higher.
-    Otherwise it will traverse the current working directory up towards the root until it finds a ``.git`` directory, then use ``--git-dir`` and ``--work-tree``.
-    True by default.
-:param bool show_tag:
-    Show tag description. Valid options are``contains``, ``last``, ``annotated`` and ``exact``. A value of True behaves the same as ``exact``, which only displays a tag when it's assigned to the currently checked-out revision.
-    False by default, because it needs to execute git an additional time.
-:param dict formats:
-    A string-to-string dictionary for customizing Git status formats. Valid keys include ``branch``, ``tag``, ``ahead``, ``behind``, ``staged``, ``unmerged``, ``changes``, ``untracked``, and ``stashed``.
-    Empty dictionary by default, which means the default formats are used.
-:param detached_head_style:
-    Display style when in detached HEAD state. Valid values are ``revision``, which shows the current revision id, and ``ref``, which shows the closest reachable ref object.
-    The default is ``revision``.
-Divider highlight group used: ``gitstatus:divider``.
-Highlight groups used: ``gitstatus_branch_detached``, ``gitstatus_branch_dirty``, ``gitstatus_branch_clean``, ``gitstatus_branch``, ``gitstatus_tag``, ``gitstatus_behind``, ``gitstatus_ahead``, ``gitstatus_staged``, ``gitstatus_unmerged``, ``gitstatus_changed``, ``gitstatus_untracked``, ``gitstatus_stashed``, ``gitstatus``.
-''')

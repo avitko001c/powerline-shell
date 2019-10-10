@@ -1,5 +1,5 @@
 import os
-from powerline_shell.runcmd import Command
+from powerline_shell.utils import Command
 from powerline_shell.symbols import *
 from powerline_shell.utils import ThreadedSegment, decode
 from powerline_shell.color_compliment import stringToHashToColorAndOpposite, rgb2short

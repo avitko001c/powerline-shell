@@ -1,7 +1,7 @@
 import os
 import re
 import platform
-from powerline_shell.runcmd import Command
+from powerline_shell.utils import Command
 from powerline_shell.utils import ThreadedSegment
 from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
 

@@ -3,9 +3,10 @@ from __future__ import (unicode_literals, division, absolute_import, print_funct
 
 import json
 
-from powerline.lib.url import urllib_read, urllib_urlencode
-from powerline.lib.threaded import KwThreadedSegment
-from powerline.segments import with_docstring
+from requests import get
+from powerline_shell.power.lib.url import urllib_read, urllib_urlencode
+from powerline_shell.power.lib.threaded import KwThreadedSegment
+from powerline_shell.power.segments import with_docstring
 
 # XXX Warning: module name must not be equal to the segment name as long as this
 # segment is imported into powerline.segments.common module.
@@ -114,11 +115,12 @@ class WeatherSegment(KwThreadedSegment):
             return self.location_urls[location_query]
         except KeyError:
             if location_query is None:
-                location_data = json.loads(urllib_read('http://geoip.nekudo.com/api/'))
+                ip = get('https://api.ipify.org').text
+                location_data = json.loads(urllib_read('http://api.ipapi.com/{}?access_key=28005f84f6be7b2ab8c966277fde9145'.format(ip)))
                 location = ','.join((
                     location_data['city'],
-                    location_data['country']['name'],
-                    location_data['country']['code']
+                    location_data['country_name'],
+                    location_data['country_code']
                 ))
                 self.info('Location returned by nekudo is {0}', location)
             else:

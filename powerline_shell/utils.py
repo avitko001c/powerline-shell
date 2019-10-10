@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
 
 import sys
 import os
@@ -8,7 +8,7 @@ import subprocess
 import psutil
 import public
 from threading import Thread
-from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
+from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding, safe_unicode
 
 try:
    from shutil import which  # Python-3.3 and later
@@ -194,7 +194,6 @@ class EventLogger(object):
         self.last_msgs = {}
 
     def _log(self, attr, msg, *args, **kwargs):
-        from powerline_shell.unicode import safe_unicode
         prefix = kwargs.get('prefix') or self.prefix
         prefix = self.ext + ((':' + prefix) if prefix else '')
         msg = safe_unicode(msg)
@@ -278,7 +277,6 @@ class CommandNotFound(OSError):
     ''' Raise when the command entered is not found '''
 
 
-@public.add
 class Command(object):
     """Command class"""
     custom_popen_kwargs = None
@@ -306,10 +304,7 @@ class Command(object):
     @property
     def run(self):
         self.code, self._out, self._err = None, "", ""
-	try:
-            self.valid = which(self.command[0])
-	except:
-            self.valid = None
+        self.valid = which(self.command[0])
         if not self.valid:
             msg = "CommandNotFoundError: [Errno 2] Command not found: {}: args: {}".format(self.command[0], self.command[1:])
             raise CommandNotFound(msg)
@@ -324,6 +319,12 @@ class Command(object):
         self._code = self.code
         self._pid = self.process.pid
         return self
+
+    def __call__(self):
+        """Setting the class call to output.  If just text is needed
+        Then issue the class self.text property
+        """
+        return self.rerun()
 
     def __bool__(self):
         """return True if status code is 0"""
@@ -347,10 +348,6 @@ class Command(object):
             raise OSError("%s exited with code %s" % (self.args, self.code))
         return self
 
-    def _raise(self):
-        """deprecated"""
-        return self.exc()
-
     def kill(self, signal=None):
         """kill process. return error string if error occured"""
         if self.running:
@@ -361,8 +358,22 @@ class Command(object):
                 return err.decode().rstrip()
 
     def rerun(self):
+        if self.running:
+            self.kill('-9')
         self.run
         return self.out
+
+    @property
+    def _default_popen_kwargs(self):
+        return {
+            'env': os.environ.copy(),
+            'stdin': subprocess.PIPE,
+            'stdout': subprocess.PIPE,
+            'stderr': subprocess.PIPE,
+            'shell': False,
+            'universal_newlines': True,
+            'bufsize': 0
+        }
 
     @property
     def pid(self):
@@ -423,17 +434,6 @@ class Command(object):
         kwargs.update(self.custom_popen_kwargs)
         return kwargs
 
-    @property
-    def _default_popen_kwargs(self):
-        return {
-            'env': os.environ.copy(),
-            'stdin': subprocess.PIPE,
-            'stdout': subprocess.PIPE,
-            'stderr': subprocess.PIPE,
-            'shell': False,
-            'universal_newlines': True,
-            'bufsize': 0
-        }
 
 
 def import_file(module_name, path):

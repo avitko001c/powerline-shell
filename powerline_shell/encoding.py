@@ -150,7 +150,7 @@ if sys.maxunicode < 0x10FFFF:
 def u(s):
 	'''Return unicode instance assuming UTF-8 encoded string.
 	'''
-	if type(s) is unicode:
+	if type(s) is unicode or type(s):
 		return s
 	else:
 		return unicode(s, 'utf-8')

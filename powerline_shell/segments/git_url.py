@@ -8,32 +8,36 @@ except ImportError:
    from subprocess import check_output
    which = lambda x: check_output(['which', x]).decode('utf-8').strip('\n')
 try:
-    from git import Git
+    from git import Git, GitCommandError, GitCommandNotFound
     git_cmd = lambda x: Git().config(x)
 except ImportError:
     git_executable = which('git')
-    git_cmd = lambda x: Command([git_executable] + x).text
+    git_cmd = lambda x: Command([git_executable] + ['config'] + x).text
 
 def check_git_dir():
-    git_dir = Git(os.getcwd()).is_git_dir()
+    git_dir = git_cmd(os.getcwd()).is_git_dir()
     if git_dir:
         return True
     return False
 
 def get_git_url():
-    git_url = git_cmd(['--get', 'remote.origin.url'])
-    if not git_url:
+    try:
+        git_url = git_cmd(['--get', 'remote.origin.url'])
+    except GitCommandError:
         return None
     return git_url
 
 class Segment(ThreadedSegment):
-    def run(self):
+    def __init__(self, powerline, seg_conf):
+        super().__init__(powerline, seg_conf)
         self.git_url = get_git_url()
-        self.logo = u(git.dump())
+
+    def run(self):
+        self.logo = u(git(1))
         if 'bitbucket' in str(self.git_url):
-            self.logo = u(bitbucket.dump())
+            self.logo = u(bitbucket(1))
         elif 'github' in str(self.git_url):
-            self.logo = u(github.dump())
+            self.logo = u(github(1))
 
     def add_to_powerline(self):
         self.join()

@@ -1,6 +1,7 @@
 import re
 import os
 import subprocess
+from powerline_shell.symbols import *
 from powerline_shell.utils import RepoStats, ThreadedSegment, get_git_subprocess_env
 from powerline_shell.encoding import get_preferred_output_encoding
 
@@ -13,12 +14,15 @@ def parse_git_branch_info(status):
 
 
 def _get_git_detached_branch():
-    p = subprocess.Popen(['git', 'describe', '--tags', '--always'], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                         env=get_git_subprocess_env())
-    # detached_ref = subprocess.check_output(['git', 'describe', '--tags', '--always'], env=get_git_subprocess_env()).decode(get_preferred_output_encoding()).rstrip('\n')
-    detached_ref = p.communicate()[0].decode(get_preferred_output_encoding()).rstrip('\n')
-    if p.returncode == 0:
-        branch = u'{} {}'.format(RepoStats.symbols['detached'], detached_ref)
+    try:
+        from git import Git
+        git_cmd = lambda x: Git().describe(x)
+    except:
+        from powerline_shell.utils import Command
+        git_cmd = lambda x: Command(['git', 'describe'] + x).text
+    detached_ref = git_cmd(['--tags', '--always'])
+    if detached_ref:
+        branch = u'{} {}'.format(repostats_detatched(1), detached_ref)
     else:
         branch = 'Big Bang'
     return branch
@@ -42,40 +46,46 @@ def parse_git_stats(status):
 
 
 def build_stats():
-    # Check to see if we are in a git directory
-    path = '/'
-    path_list = list()
-    git_status = False
-    for p in os.getenv("PWD").split('/'):
-        path += p + '/'
-        path_list.append(path)
-    for i in path_list:
-        if os.path.isdir(i + ".git"):
-            git_status = True
-            break
-        else:
-            pass
+    try:
+        from git import Git
+        git_status = Git(os.getcwd()).is_git_dir()
+    except:
+        git_status = False
+        for p in os.getenv("PWD").split('/'):
+            path += p + '/'
+            path_list.append(path)
+        for i in path_list:
+            if os.path.isdir(i + ".git"):
+                git_status = True
+                break
+            else:
+                pass
     # Run thru getting stats unless we aren't in a git repo
+    try:
+        from git import Git
+        git_cmd = lambda x: Git().status(x)
+    except:
+        from powerline_shell.utils import Command
+        git_cmd = lambda x: Command(['git', 'status'] + x).text
     if git_status:
         try:
+            pdata = git_cmd(['--porcelain', '-b'])
             p = subprocess.Popen(['git', 'status', '--porcelain', '-b'],
                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                  env=get_git_subprocess_env())
-        except OSError:
+        except:
             # Popen will throw an OSError if git is not found
             return None, None
 
-        pdata = p.communicate()
-        if p.returncode != 0:
-            return None, None
+        #pdata = p.communicate()
 
-        status = pdata[0].decode(get_preferred_output_encoding()).splitlines()
+        status = pdata.splitlines()
         stats = parse_git_stats(status)
         branch_info = parse_git_branch_info(status)
 
         if branch_info:
-            stats.ahead = branch_info["ahead"]
-            stats.behind = branch_info["behind"]
+            stats.ahead = branch_info['ahead']
+            stats.behind = branch_info['behind']
             branch = branch_info['local']
         else:
             branch = _get_git_detached_branch()
@@ -98,7 +108,7 @@ class Segment(ThreadedSegment):
             bg = self.powerline.theme.REPO_DIRTY_BG
             fg = self.powerline.theme.REPO_DIRTY_FG
         if self.powerline.segment_conf("vcs", "show_symbol"):
-            symbol = RepoStats().symbols["git"] + " "
+            symbol = repostats_git()
         else:
             symbol = ""
         self.powerline.append(" " + symbol + self.branch + " ", fg, bg)

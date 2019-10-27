@@ -17,15 +17,15 @@ GLYPH_WALL = u"\u23E6"
 
 class Segment(BasicSegment):
     def __init__(self, powerline, segment_def):
-        BasicSegment.__init__(self, powerline, segment_def)
+        super().__init__(powerline, segment_def)
         self.sys_paths = ("/sys/class/power_supply/BAT0","/sys/class/power_supply/BAT1")
         self.charge_state = {
             "":                 ChargeState(self, "", ""),
             None:               ChargeState(self, "None", "?"),
-            "charged":          ChargeState(self, "charged", GLYPH_FULL),
+            "charged":          ChargeState(self, "charged"),
             "discharging":      ChargeState(self, "discharging", GLYPH_DISCHARGING),
-            "charging":         ChargeState(self, "charging", GLYPH_CHARGING),
-            "finishing charge": ChargeState(self, "finishing charge", GLYPH_CHARGING)
+            "charging":         ChargeState(self, "charging", self.symbols.charging(1),
+            "finishing charge": ChargeState(self, "finishing charge", self.symbols.plug(1))
         }
         self.charge_state["full"] = self.charge_state["charged"]
         self.battery_state = {"":"", "battery":GLYPH_BATT, "ac":GLYPH_WALL}

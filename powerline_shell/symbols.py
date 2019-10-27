@@ -16,7 +16,7 @@ class Symbols(BaseModel):
     def __str__(self):
         return (self.name)
 
-    def dump(self, _padding=False):
+    def __call__(self, _padding=False):
         padding = ""
         if _padding:
             if isinstance(_padding, int):
@@ -261,6 +261,7 @@ certificate = Symbols(name='certificate', symbol='\uf0a3')
 chair = Symbols(name='chair', symbol='\uf6c0')
 chalkboard = Symbols(name='chalkboard', symbol='\uf51b')
 chalkboard_teacher = Symbols(name='chalkboard_teacher', symbol='\uf51c')
+charging = Symbols
 charging_station = Symbols(name='charging_station', symbol='\uf5e7')
 chart_area = Symbols(name='chart_area', symbol='\uf1fe')
 chart_bar = Symbols(name='chart_bar', symbol='\uf080')
@@ -830,7 +831,7 @@ linkedin_alt = Symbols(name='linkedin_in', symbol='\uf0e1')
 linode = Symbols(name='linode', symbol='\uf2b8')
 linux = Symbols(name='linux', symbol='\uf17c')
 lira_sign = Symbols(name='lira_sign', symbol='\uf195')
-list = Symbols(name='list', symbol='\uf03a')
+list_symbol = Symbols(name='list', symbol='\uf03a')
 list_alt = Symbols(name='list_alt', symbol='\uf022')
 list_ol = Symbols(name='list_ol', symbol='\uf0cb')
 list_ul = Symbols(name='list_ul', symbol='\uf0ca')
@@ -1027,7 +1028,7 @@ praying_hands = Symbols(name='praying_hands', symbol='\uf684')
 prescription = Symbols(name='prescription', symbol='\uf5b1')
 prescription_bottle = Symbols(name='prescription_bottle', symbol='\uf485')
 prescription_bottle_alt = Symbols(name='prescription_bottle_alt', symbol='\uf486')
-print = Symbols(name='print', symbol='\uf02f')
+printer = Symbols(name='print', symbol='\uf02f')
 procedures = Symbols(name='procedures', symbol='\uf487')
 product_hunt = Symbols(name='product_hunt', symbol='\uf288')
 project_diagram = Symbols(name='project_diagram', symbol='\uf542')

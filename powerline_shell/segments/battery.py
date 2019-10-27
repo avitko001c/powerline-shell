@@ -5,9 +5,10 @@ from powerline_shell.symbols import *
 from powerline_shell.encoding import u
 
 try:
-    from shutil import wich  # Python-3.3 and later
+    from shutil import which  # Python-3.3 and later
 except ImportError:
-    which = lambda f: (lambda fp: os.path.exists(fp) and fp)(os.path.join('/usr/bin', f))
+    from subprocess import getoutput
+    which = lambda f: getoutput('which {cmd}'.format(cmd=x))
 
 
 class Segment(BasicSegment):
@@ -68,51 +69,51 @@ class Segment(BasicSegment):
         fg = self.powerline.theme.BATTERY_NORMAL_FG
         if source == 'discharging':
             if cap <= low_threshold:
-                pwr_fmt = str(' ') + str(cap) + u(battery_ten.dump(1))
+                pwr_fmt = str(' ') + str(cap) + u(battery_ten(1))
                 bg = self.powerline.theme.BATTERY_LOW_BG
                 fg = self.powerline.theme.BATTERY_LOW_FG
             elif cap > low_threshold and cap <= warn_threshold:
-                pwr_fmt = str(' ') + str(cap) + u(battery_twenty.dump(1))
+                pwr_fmt = str(' ') + str(cap) + u(battery_twenty(1))
                 bg = self.powerline.theme.BATTERY_WARN_BG
                 fg = self.powerline.theme.BATTERY_WARN_FG
             elif cap > warn_threshold and cap <= int(30):
-                pwr_fmt = str(' ') + str(cap) + u(battery_thirty.dump(1))
+                pwr_fmt = str(' ') + str(cap) + u(battery_thirty(1))
                 bg = self.powerline.theme.BATTERY_NORMAL_BG
                 fg = self.powerline.theme.BATTERY_NORMAL_FG
             elif cap > int(30) and cap <= int(40):
-                pwr_fmt = str(' ') + str(cap) + u(battery_forty.dump(1))
+                pwr_fmt = str(' ') + str(cap) + u(battery_forty(1))
                 bg = self.powerline.theme.BATTERY_NORMAL_BG
                 fg = self.powerline.theme.BATTERY_NORMAL_FG
             elif cap > int(40) and cap <= int(50):
-                pwr_fmt = str(' ') + str(cap) + u(battery_fifty.dump(1))
+                pwr_fmt = str(' ') + str(cap) + u(battery_fifty(1))
                 bg = self.powerline.theme.BATTERY_NORMAL_BG
                 fg = self.powerline.theme.BATTERY_NORMAL_FG
             elif cap > int(50) and cap <= int(60):
-                pwr_fmt = str(' ') + str(cap) + u(battery_sixty.dump(1))
+                pwr_fmt = str(' ') + str(cap) + u(battery_sixty(1))
                 bg = self.powerline.theme.BATTERY_NORMAL_BG
                 fg = self.powerline.theme.BATTERY_NORMAL_FG
             elif cap > int(50) and cap <= int(70):
-                pwr_fmt = str(' ') + str(cap) + u(battery_seventy.dump(1))
+                pwr_fmt = str(' ') + str(cap) + u(battery_seventy(1))
                 bg = self.powerline.theme.BATTERY_NORMAL_BG
                 fg = self.powerline.theme.BATTERY_NORMAL_FG
             elif cap > int(70) and cap <= int(80):
-                pwr_fmt = str(' ') + str(cap) + u(battery_seventy.dump(1))
+                pwr_fmt = str(' ') + str(cap) + u(battery_seventy(1))
                 bg = self.powerline.theme.BATTERY_NORMAL_BG
                 fg = self.powerline.theme.BATTERY_NORMAL_FG
             elif cap > int(80) and cap <= int(90):
-                pwr_fmt = str(' ') + str(cap) + u(battery_ninety.dump(1))
+                pwr_fmt = str(' ') + str(cap) + u(battery_ninety(1))
                 bg = self.powerline.theme.BATTERY_NORMAL_BG
                 fg = self.powerline.theme.BATTERY_NORMAL_FG
             elif cap > int(90) and cap <= int(100):
-                pwr_fmt = str(' ') + str(cap) + u(battery_hundred.dump(1))
+                pwr_fmt = str(' ') + str(cap) + u(battery_hundred(1))
                 bg = self.powerline.theme.BATTERY_NORMAL_BG
                 fg = self.powerline.theme.BATTERY_NORMAL_FG
         elif source == "charging" or source == "charged":
-            pwr_fmt = u(plug.dump(1))
+            pwr_fmt = u(plug(1))
             bg = self.powerline.theme.BATTERY_NORMAL_BG
             fg = self.powerline.theme.BATTERY_NORMAL_FG
         elif not isinstance(cap, int):
-            pwr_fmt = str(' ') + str(cap) + u(battery_error.dump(1))
+            pwr_fmt = str(' ') + str(cap) + u(battery_error(1))
             bg = self.powerline.theme.BATTERY_LOW_BG
             fg = self.powerline.theme.BATTERY_LOW_FG
            

@@ -1,27 +1,25 @@
 #-*- coding: utf-8 -*-
 
-import sys
 import os
-import logging
-import traceback
-import subprocess
+import re
+import sys
 import psutil
-import public
+import logging
+import subprocess
 from threading import Thread
 from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding, safe_unicode
 
 try:
    from shutil import which  # Python-3.3 and later
 except ImportError:
-   from subprocess import check_output
-   which = lambda x: check_output(['which', x]).decode('utf-8').strip('\n')
+   from subprocess import getoutput
+   which = lambda x: getoutput('which {cmd}'.format(cmd=x))
 
 py3 = sys.version_info[0] == 3
 
 if py3:
     def unicode_(x):
         return str(x)
-
 
     def decode(x):
         return x.decode(get_preferred_output_encoding())
@@ -46,7 +44,7 @@ class RepoStats(object):
         'bzr': u'\u2B61\u20DF',
         'fossil': u'\u2332',
         'svn': u'\u2446',
-        'url': u'\uf116',
+        'url': u'\uf116  ',
     }
 
     def __init__(self, ahead=0, behind=0, new=0, changed=0, staged=0, conflicted=0):
@@ -56,7 +54,6 @@ class RepoStats(object):
         self.changed = changed
         self.staged = staged
         self.conflicted = conflicted
-        # print(self.symbols)
 
     def __eq__(self, other):
         return (
@@ -108,6 +105,19 @@ class RepoStats(object):
         add('new', color.GIT_UNTRACKED_FG, color.GIT_UNTRACKED_BG)
         add('conflicted', color.GIT_CONFLICTED_FG, color.GIT_CONFLICTED_BG)
 
+def setup_ssl():
+    """If we are getting SSLCertVerificationError's when connection to https
+     sites we can call this function in and no verify them
+     """
+    import ssl
+    try:
+        _create_unverified_https_context = ssl._create_unverified_context
+    except AttributeError:
+        # Legacy Python that doesn't verify HTTPS certificates by default
+        pass
+    else:
+        # Handle target environment that doesn't support HTTPS verification
+        ssl._create_default_https_context = _create_unverified_https_context
 
 def set_logger(loglevel, logname):
     log_format = '%(asctime)s:%(levelname)s:%(message)s'
@@ -234,7 +244,7 @@ class BasicSegment(object):
         from powerline_shell import symbols
         self.powerline = powerline
         self.segment_def = segment_def  # type: dict
-        self.symbols = powerline.symbols
+        self.symbols = symbols
 
     def start(self):
         pass
@@ -476,3 +486,61 @@ def get_git_subprocess_env():
     # LANG is specified to ensure git always uses a language we are expecting.
     # Otherwise we may be unable to parse the output.
     return get_subprocess_env(LANG="C")
+
+
+def json_minify(string, strip_space=True):
+    tokenizer = re.compile('"|(/\*)|(\*/)|(//)|\n|\r')
+    end_slashes_re = re.compile(r'(\\)*$')
+
+    in_string = False
+    in_multi = False
+    in_single = False
+
+    new_str = []
+    index = 0
+
+    for match in re.finditer(tokenizer, string):
+
+        if not (in_multi or in_single):
+            tmp = string[index:match.start()]
+            if not in_string and strip_space:
+                # replace white space as defined in standard
+                tmp = re.sub('[ \t\n\r]+', '', tmp)
+            new_str.append(tmp)
+        elif not strip_space:
+            # Replace comments with white space so that the JSON parser reports
+            # the correct column numbers on parsing errors.
+            new_str.append(' ' * (match.start() - index))
+
+        index = match.end()
+        val = match.group()
+
+        if val == '"' and not (in_multi or in_single):
+            escaped = end_slashes_re.search(string, 0, match.start())
+
+            # start of string or unescaped quote character to end string
+            if not in_string or (escaped is None or len(escaped.group()) % 2 == 0):  # noqa
+                in_string = not in_string
+            index -= 1  # include " character in next catch
+        elif not (in_string or in_multi or in_single):
+            if val == '/*':
+                in_multi = True
+            elif val == '//':
+                in_single = True
+        elif val == '*/' and in_multi and not (in_string or in_single):
+            in_multi = False
+            if not strip_space:
+                new_str.append(' ' * len(val))
+        elif val in '\r\n' and not (in_multi or in_string) and in_single:
+            in_single = False
+        elif not ((in_multi or in_single) or (val in ' \r\n\t' and strip_space)):  # noqa
+            new_str.append(val)
+
+        if not strip_space:
+            if val in '\r\n':
+                new_str.append(val)
+            elif in_multi or in_single:
+                new_str.append(' ' * len(val))
+
+    new_str.append(string[index:])
+    return ''.join(new_str)

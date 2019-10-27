@@ -16,9 +16,10 @@ except ImportError:
 class Segment(ThreadedSegment):
     def run(self):
         self.logo = u(ruby.symbol)
+        self.cmd = Command(['ruby', '-v'])
         try:
             if which('ruby'):
-                self.version = Command(["ruby", "-v"])).out.split()[1]
+                self.version = self.cmd()[1]
                 try:
                     self.FG, self.BG = self.powerline.theme.RUBY_VERSION_FG, self.powerline.theme.RUBY_VERSION_BG
                 except:

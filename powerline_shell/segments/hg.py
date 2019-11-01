@@ -1,5 +1,6 @@
 import os
 import subprocess
+from path import Path
 from powerline_shell.utils import RepoStats, ThreadedSegment, get_subprocess_env
 from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
 
@@ -33,13 +34,11 @@ def _get_hg_status(output):
 
 def build_stats():
     # Check to see if we are in a git directory
-    path = '/'
-    for p in os.getenv("PWD").split('/'):
-        path += p + '/'
-        if os.path.isdir(path+'.git'):
-            break
-        else:
-            return None, None
+    path = Path(os.getcwd() + '/.hg')
+    if path.isdir():
+        pass
+    else:
+        return None, None
     try:
         p = subprocess.Popen(["hg", "status"],
                              stdout=subprocess.PIPE,

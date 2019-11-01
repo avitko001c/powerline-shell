@@ -24,7 +24,7 @@ class Segment(BasicSegment):
             None:               ChargeState(self, "None", "?"),
             "charged":          ChargeState(self, "charged"),
             "discharging":      ChargeState(self, "discharging", GLYPH_DISCHARGING),
-            "charging":         ChargeState(self, "charging", self.symbols.charging(1),
+            "charging":         ChargeState(self, "charging", self.symbols.charging(1)),
             "finishing charge": ChargeState(self, "finishing charge", self.symbols.plug(1))
         }
         self.charge_state["full"] = self.charge_state["charged"]

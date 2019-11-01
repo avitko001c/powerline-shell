@@ -1,4 +1,4 @@
-# A Powerline style prompt for your shell
+****A Powerline style prompt for your shell****
 
 A beautiful and useful prompt generator for Bash, ZSH, Fish, and tcsh:
 

@@ -1,8 +1,9 @@
 import os
+from powerline_shell.symbols import *
 from powerline_shell.utils import warn, py3, BasicSegment
 from powerline_shell.encoding import get_preferred_output_encoding
 
-ELLIPSIS = u'\u2026'
+ELLIPSIS = ellipsis_h()
 
 
 def replace_home_dir(cwd):

@@ -3,17 +3,24 @@
 import os
 import re
 import sys
-import psutil
 import logging
 import subprocess
 from threading import Thread
 from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding, safe_unicode
+try:
+    import psutil
+except:
+    pass
 
 try:
    from shutil import which  # Python-3.3 and later
 except ImportError:
-   from subprocess import getoutput
-   which = lambda x: getoutput('which {cmd}'.format(cmd=x))
+   try:
+       from subprocess import getoutput
+       which = lambda x: getoutput('which {cmd}'.format(cmd=x))
+   except:
+       from subprocess import check_output
+       which = lambda x: check_output(['which', '{cmd}'.format(cmd=x)]).strip('\n')
 
 py3 = sys.version_info[0] == 3
 
@@ -292,11 +299,12 @@ class Command(object):
     custom_popen_kwargs = None
     __readme__ = ["exc", "args", "code", "out", "err", "pid", "kill", "ok", "running", "__bool__"]
 
-    def __init__(self, _command, cwd=None, env=None, background=False, **popen_kwargs):
+    def __init__(self, _command, newline=True, cwd=None, env=None, background=False, **popen_kwargs):
         if isinstance(_command, str):
             self.command = _command.split()
         elif isinstance(_command, list):
             self.command = _command
+        self.newline = newline
         self.code, self._out, self._err = None, "", ""
         self.env = env
         self.cwd = cwd
@@ -310,6 +318,9 @@ class Command(object):
             self.kwargs["stdout"] = open(os.devnull, 'wb')
             self.kwargs["stderr"] = open(os.devnull, 'wb')
         self.run
+
+    def __len__(self):
+        return len(self.out)
 
     @property
     def run(self):
@@ -408,7 +419,9 @@ class Command(object):
     @property
     def out(self):
         """return stdout string"""
-        if isinstance(self._out, list):
+        if self._out == '':
+            return "\n".join(filter(None, [self._out] + [self.err])).replace('\n', ' ').split()
+        elif isinstance(self._out, list):
             return self._out
         try:
             if '\n' in self._out:
@@ -420,7 +433,17 @@ class Command(object):
     @property
     def text(self):
         """return stdout+stderr string"""
-        return "\n".join(filter(None, self.out + [self.err])).replace('\n', ' ')
+        if self.out == self._err.split():
+            if self.newline:
+                print('using newline 1')
+                return "\n".join(filter(None, [""] + [self.out]))
+            print("not using newline 2")
+            return " ".join(filter(None, [self._err]))
+        if self.newline:
+            print('using newline 3')
+            return "\n".join(filter(None, self.out + [self._err]))
+        print("not using newline 4")
+        return " ".join(filter(None, self.out + [self._err]))
 
     @property
     def ok(self):

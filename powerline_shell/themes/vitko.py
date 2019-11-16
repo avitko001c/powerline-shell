@@ -125,6 +125,10 @@ class Color(DefaultColor):
     PRIVATE_IP_FG = 148
     PRIVATE_IP_BG = dark1
     PRIVATE_IP_OFFLINE = neutral_red
+    PLATFORM_FG = light2
+    PLATFORM_BG = dark1
+    RUBY_VERSION_FG = light2
+    RUBY_VERSION_BG = dark1
 
     SYMBOLS = {
         "flames": {

@@ -127,8 +127,8 @@ class Color(DefaultColor):
     PLATFORM_FG = light2
     PLATFORM_BG = dark1
 
-    RUBY1_VERSION_FG = light2
-    RUBY1_VERSION_BG = dark1
+    RUBY_VERSION_FG = light2
+    RUBY_VERSION_BG = dark1
 
     SYMBOLS = {
         "flames": {

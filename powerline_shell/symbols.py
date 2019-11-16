@@ -1,9 +1,10 @@
-
+import os
 from peewee import *
+from playhouse.sqlite_ext import SearchField, FTSModel, RowIDField
 
 VERSION ='3.5.1'
 
-db = SqliteDatabase(':memory:')
+db = SqliteDatabase(os.path.expanduser('~/.config/powerline-shell/symbols.db'))
 
 class BaseModel(Model):
     class Meta:
@@ -13,15 +14,35 @@ class Symbols(BaseModel):
     name = TextField()
     symbol = CharField()
 
-    def __str__(self):
+    def __init__(self, *args, **kwargs):
+        super(Symbols, self).__init__(*args, **kwargs)
+
+    def __str__(self, *args, **kwargs):
         return (self.name)
 
-    def __call__(self, _padding=False):
+    def __call__(self, _padding=False, *args, **kwargs):
+        self.create_table()
         padding = ""
         if _padding:
             if isinstance(_padding, int):
                 padding = " " * _padding
         return (padding + self.symbol + padding)
+
+    def create_index(self, document):
+        SymbolsIndex.insert({
+            SymbolsIndex.rowid: document.id,
+            SymbolsIndex.name: document.name,
+            SymbolsIndex.symbol: document.symbol
+        }).execute
+
+class SymbolsIndex(FTSModel):
+    rowid = RowIDField()
+    name = SearchField()
+    symbol = SearchField()
+
+    class Meta:
+        database = db
+        options = {'tokenize', 'porter'}
 
 
 accessible_icon = Symbols(name='accessible_icon', symbol='\uf368')

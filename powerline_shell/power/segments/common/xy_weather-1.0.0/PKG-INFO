@@ -1,0 +1,11 @@
+Metadata-Version: 1.0
+Name: xy_weather
+Version: 1.0.0
+Summary: Get The Weather App
+Home-page: UNKNOWN
+Author: KingHS
+Author-email: 382771946@qq.com
+License: MIT
+Description: Get the weather forecast for the next 15 days
+Keywords: pip3,weather,weathers,python3,python,weather forecast
+Platform: UNKNOWN

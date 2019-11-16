@@ -7,6 +7,7 @@ import json
 import argparse
 import traceback
 import importlib
+from powerline_shell.path import Path
 from powerline_shell.utils import warn, info, debug, exception, critical, error, py3, import_file
 from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
 
@@ -157,7 +158,14 @@ def find_config():
     ]:
         full = os.path.expanduser(location)
         if os.path.exists(full):
-            return full
+            try:
+                out = json.loads(Path(full).read_bytes())
+            except Exception:
+                warn("Config file ({0}) could not be decoded! Using Default config:"
+                     .format(full))
+                #error(traceback.format_exc())
+                out = DEFAULT_CONFIG
+            return out
 
 DEFAULT_CONFIG = {
     "segments": [
@@ -166,7 +174,7 @@ DEFAULT_CONFIG = {
         'hostname',
         'ssh',
         'cwd',
-        'git',
+        'git_cmd',
         'hg',
         'jobs',
         'root',
@@ -219,22 +227,22 @@ def main():
 
     if args.config and not os.path.exists(os.path.expanduser(args.config)):
         info('Cannot find config file using default config file: {0}', args.config)
-        config_path = find_config()
+        config = find_config()
     elif args.config and os.path.exists(os.path.expanduser(args.config)):
-        config_path = args.config
+        config = json.loads(Path(args.config).read_bytes())
     else:
-        config_path = find_config()
-    if config_path:
-        with open(config_path) as f:
-            try:
-                config = json.loads(f.read())
-            except Exception:
-                warn("Config file ({0}) could not be decoded! Using Default config:"
-                     .format(config_path))
-                error(traceback.format_exc())
-                config = DEFAULT_CONFIG
-    else:
-        config = DEFAULT_CONFIG
+        config = find_config()
+    #if config_path:
+    #    with open(config_path) as f:
+    #        try:
+    #            config = json.loads(f.read())
+    #        except Exception:
+    #            warn("Config file ({0}) could not be decoded! Using Default config:"
+    #                 .format(config_path))
+    #            error(traceback.format_exc())
+    #            config = DEFAULT_CONFIG
+    #else:
+    #    config = DEFAULT_CONFIG
 
     custom_importer = CustomImporter()
     theme_mod = custom_importer.import_(

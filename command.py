@@ -8,8 +8,12 @@ import public
 try:
    from shutil import which  # Python-3.3 and later
 except ImportError:
-   from subprocess import check_output
-   which = lambda x: check_output(['which', x]).decode('utf-8').strip('\n')
+   try:
+       from subprocess import getoutput
+       which = lambda x: getoutput('which {cmd}'.format(cmd=x))
+   except:
+       from subprocess import check_output
+       which = lambda x: check_output(['which', '{cmd}'.format(cmd=x)]).strip('\n')
 
 class CommandNotFound(OSError):
     ''' Raise when the command entered is not found '''
@@ -96,8 +100,6 @@ class Command(object):
                 return err.decode().rstrip()
 
     def rerun(self):
-        if self.running:
-            self.kill('-9')
         self.run
         return self.out
 

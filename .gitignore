@@ -1,3 +1,5 @@
+*cache*
+*.swp
 powerline-shell.py
 *.py[co]
 config.py

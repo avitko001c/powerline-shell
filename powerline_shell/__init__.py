@@ -7,9 +7,12 @@ import json
 import argparse
 import traceback
 import importlib
-from powerline_shell.path import Path
 from powerline_shell.utils import warn, info, debug, exception, critical, error, py3, import_file
 from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
+try:
+    from pathlib import Path
+exceot ImportError:
+    pass
 
 
 def _current_dir():

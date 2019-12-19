@@ -23,8 +23,8 @@ from argcomplete.completers import ChoicesCompleter
 logging.basicConfig(level="WARNING", format="%(asctime)s %(message)s")
 logging.warning("Logging is set")
 
-configpath = Path(os.path.expanduser("~") + "/.config/print_coupon")
-configfile = Path(os.path.expanduser("~") + "/.config/print_coupon/stores.json")
+configpath = Path("~/.config/print_coupon").expanduser()
+configfile = configpath.__add__('/stores.json')
 data = pandas.DataFrame(json.loads(configfile.bytes().decode("utf-8")))
 stores = data.keys()
 

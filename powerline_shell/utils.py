@@ -12,17 +12,24 @@ try:
 except:
     pass
 
+if sys.platform == 'windows':
+    WHICH_CMD = 'where'
+else:
+    WHICH_CMD = 'which'
+
+py3 = sys.version_info[0] == 3
+
 try:
-   from shutil import which  # Python-3.3 and later
+   from shutil import which as find # Python-3.3 and later
+   which = lambda x: find('{cmd}'.format(cmd=x))
 except ImportError:
    try:
        from subprocess import getoutput
-       which = lambda x: getoutput('which {cmd}'.format(cmd=x))
-   except:
+       which = lambda x: getoutput(WHICH_CMD + ' {cmd}'.format(cmd=x))
+   except ImportError:
        from subprocess import check_output
-       which = lambda x: check_output(['which', '{cmd}'.format(cmd=x)]).strip('\n')
+       which = lambda x: check_output([WHICH_CMD, '{cmd}'.format(cmd=x)]).strip('\n')
 
-py3 = sys.version_info[0] == 3
 
 if py3:
     def unicode_(x):

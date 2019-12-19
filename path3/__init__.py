@@ -26,13 +26,14 @@ $Id$
 import fnmatch
 import os
 import shutil
+import io
 import sys
 
-__all__ = ['path']
+__all__ = ['Path']
 __version__ = '3.0b1'
 
 
-class path(str):
+class Path(str):
     """ Represents a filesystem path.
 
     For documentation on individual methods, consult their
@@ -265,7 +266,7 @@ class path(str):
         names = os.listdir(self)
         if pattern is not None:
             names = fnmatch.filter(names, pattern)
-        return [path(self, child) for child in names]
+        return [Path(self, child) for child in names]
 
     def dirs(self, pattern=None):
         """ D.dirs() -> List of this directory's subdirectories.
@@ -363,7 +364,7 @@ class path(str):
         of all the files users have in their bin directories.
         """
         import glob
-        return list(map(path, glob.glob(str(path(self, pattern)))))
+        return list(map(Path, glob.glob(str(Path(self, pattern)))))
 
     # --- Methods for querying the filesystem.
 
@@ -396,6 +397,19 @@ class path(str):
         file does not exist or is inaccessible.
         """
         return os.path.getctime(self)
+
+    def open(self, *args, **kwargs):
+        """ Open this file and return a corresponding :class:`file` object.
+
+        Keyword arguments work as in :func:`io.open`.  If the file cannot be
+        opened, an :class:`~exceptions.OSError` is raised.
+        """
+        return io.open(self, *args, **kwargs)
+
+    def bytes(self):
+        """ Open this file, read all bytes, return them as a string. """
+        with self.open('rb') as f:
+            return f.read()
 
     def size(self):
         """Size of the file, in bytes."""

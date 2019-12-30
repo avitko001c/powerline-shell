@@ -2,6 +2,15 @@
 
 # Define needed Imports
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+from builtins import str
+from builtins import range
+from builtins import int
+from future import standard_library
+standard_library.install_aliases()
 import os
 import sys
 import time
@@ -13,7 +22,7 @@ import datetime
 import argparse
 import logging
 import argcomplete
-from path import Path
+from pathlib import Path
 from escpos.printer import Usb, Dummy
 from escpos.exceptions import USBNotFoundError
 from argcomplete.completers import ChoicesCompleter
@@ -24,8 +33,8 @@ logging.basicConfig(level="WARNING", format="%(asctime)s %(message)s")
 logging.warning("Logging is set")
 
 configpath = Path("~/.config/print_coupon").expanduser()
-configfile = configpath.__add__('/stores.json')
-data = pandas.DataFrame(json.loads(configfile.bytes().decode("utf-8")))
+configfile = configpath.joinpath('stores.json')
+data = pandas.DataFrame(json.loads(configfile.read_bytes().decode("utf-8")))
 stores = data.keys()
 
 # Define the argparse class SetAction
@@ -130,11 +139,11 @@ def print_coupon(store, p, num):
     )
 
     p.set(align="center")
-    p.image(configpath + "/cvs.png", impl="bitImageRaster", center=True)
+    p.image(configpath.joinpath('cvs.png'), impl="bitImageRaster", center=True)
     p.set(font="a", align="center", smooth=True)
     p.text(addr)
     p.set(font="b", custom_size=True, width=3, height=3, align="center", smooth=True)
-    p.image(configpath + "/courtesy_coupon2.png", impl="bitImageRaster", center=True)
+    p.image(configpath.joinpath('courtesy_coupon2.png'), impl="bitImageRaster", center=True)
     p.set(font="a", align="center", smooth=True)
     p.text(
         "\nPLEASE ACCEPT THIS COUPON\nIN APPRECIATION FOR ALERTING US TO\nDATE CODED PRODUCT\n\n"
@@ -143,7 +152,7 @@ def print_coupon(store, p, num):
     p.text("\n49971\n")
     p.text("\nCOUPON VALUE $3.50\nDATE ISSUED: " + randate)
     p.text("\n*************************************\n")
-    p.image(configpath + "/bottom_warning.png", impl="bitImageRaster")
+    p.image(configpath.joinpath('bottom_warning.png'), impl="bitImageRaster")
     p.cut()
 
 

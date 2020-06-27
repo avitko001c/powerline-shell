@@ -1,0 +1,3 @@
+[submodule "print_coupon/print_coupon/python-escpos"]
+	path = print_coupon/print_coupon/python-escpos
+	url = https://github.com/python-escpos/python-escpos.git

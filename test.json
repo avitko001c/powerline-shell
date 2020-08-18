@@ -3,7 +3,7 @@ tests = [
             '''
             // this is a JSON file with comments
             {
-                "foo": "bar",    // this is cool
+                "foo1": "bar",    // this is cool
                 "bar": [
                     "baz", "bum"
                 ],

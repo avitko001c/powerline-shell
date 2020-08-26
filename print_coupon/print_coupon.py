@@ -1750,9 +1750,8 @@ class SetAction(argparse.Action):
             sys.exit()
 
 
-def split(x, n=3) -> object:
+def split(x, n=3):
     output = list()
-
     def split_it(x, n):
         zp = n - (x % n)
         pp = x // n
@@ -1765,13 +1764,15 @@ def split(x, n=3) -> object:
     if x < n:
         n = x
         split_it(x, n)
+        for i in output:
+            yield i
     elif x % n == 0:
         for i in range(n):
-            output.append(x // n)
+            yield x // n
     else:
         split_it(x, n)
-    return output
-
+        for i in output:
+            yield i
 
 def strTimeProp(start, end, prop, format="%m/%d/%y"):
     """Get a date in a range of two formatted dates.

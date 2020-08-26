@@ -11,7 +11,7 @@ from powerline_shell.utils import warn, info, debug, exception, critical, error,
 from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding
 try:
     from pathlib import Path
-exceot ImportError:
+except ImportError:
     pass
 
 

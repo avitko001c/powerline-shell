@@ -1,0 +1,11 @@
+[default]
+api_key=eoWtHy2Ymxgv_QWgbrCkphuneJA1jMNqs7K
+api_secret=WUUkHeaati27zQLnVAo7io
+
+[dev]
+api_key=3mM44UbCEfXuui_DJpv8pKQ9ahBA8p9MZz3Tm
+api_secret=VN5ErvWTs5EyydsxuC9nch
+
+[prod]
+api_key=eoWtHy2Ymxgv_QWgbrCkphuneJA1jMNqs7K
+api_secret=WUUkHeaati27zQLnVAo7io

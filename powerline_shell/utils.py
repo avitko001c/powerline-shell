@@ -1,12 +1,14 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import os
 import re
 import sys
 import logging
 import subprocess
+from os import path
 from threading import Thread
 from powerline_shell.encoding import get_preferred_output_encoding, get_preferred_input_encoding, safe_unicode
+
 try:
     import psutil
 except:
@@ -20,20 +22,23 @@ else:
 py3 = sys.version_info[0] == 3
 
 try:
-   from shutil import which as find # Python-3.3 and later
-   which = lambda x: find('{cmd}'.format(cmd=x))
-except ImportError:
-   try:
-       from subprocess import getoutput
-       which = lambda x: getoutput(WHICH_CMD + ' {cmd}'.format(cmd=x))
-   except ImportError:
-       from subprocess import check_output
-       which = lambda x: check_output([WHICH_CMD, '{cmd}'.format(cmd=x)]).strip('\n')
+    from shutil import which as find  # Python-3.3 and later
 
+    which = lambda x: find('{cmd}'.format(cmd=x))
+except ImportError:
+    try:
+        from subprocess import getoutput
+
+        which = lambda x: getoutput(WHICH_CMD + ' {cmd}'.format(cmd=x))
+    except ImportError:
+        from subprocess import check_output
+
+        which = lambda x: check_output([WHICH_CMD, '{cmd}'.format(cmd=x)]).strip('\n')
 
 if py3:
     def unicode_(x):
         return str(x)
+
 
     def decode(x):
         return x.decode(get_preferred_output_encoding())
@@ -119,6 +124,7 @@ class RepoStats(object):
         add('new', color.GIT_UNTRACKED_FG, color.GIT_UNTRACKED_BG)
         add('conflicted', color.GIT_CONFLICTED_FG, color.GIT_CONFLICTED_BG)
 
+
 def setup_ssl():
     """If we are getting SSLCertVerificationError's when connection to https
      sites we can call this function in and no verify them
@@ -132,6 +138,7 @@ def setup_ssl():
     else:
         # Handle target environment that doesn't support HTTPS verification
         ssl._create_default_https_context = _create_unverified_https_context
+
 
 def set_logger(loglevel, logname):
     log_format = '%(asctime)s:%(levelname)s:%(message)s'
@@ -280,7 +287,7 @@ class BasicSegment(object):
         eventlog.warn('[{0}] {1}', self.segment_def["type"], msg)
 
     def add_spaces_left(self, amount):
-	    return (' ' * amount)
+        return (' ' * amount)
 
 
 class BatteryStats(object):
@@ -334,7 +341,8 @@ class Command(object):
         self.code, self._out, self._err = None, "", ""
         self.valid = which(self.command[0])
         if not self.valid:
-            msg = "CommandNotFoundError: [Errno 2] Command not found: {}: args: {}".format(self.command[0], self.command[1:])
+            msg = "CommandNotFoundError: [Errno 2] Command not found: {}: args: {}".format(self.command[0],
+                                                                                           self.command[1:])
             raise CommandNotFound(msg)
         self.process = subprocess.Popen(self.command, **self.kwargs)
         self.process.args = self.command
@@ -475,7 +483,6 @@ class Command(object):
         return kwargs
 
 
-
 def import_file(module_name, path):
     # An implementation of https://stackoverflow.com/a/67692/683436
     if py3 and sys.version_info[1] >= 5:
@@ -574,3 +581,62 @@ def json_minify(string, strip_space=True):
 
     new_str.append(string[index:])
     return ''.join(new_str)
+
+
+def walk_up(bottom):
+    """
+    mimic os.walk, but walk 'up'
+    instead of down the directory tree
+    """
+
+    bottom = path.realpath(bottom)
+
+    # get files in current dir
+    try:
+        names = os.listdir(bottom)
+    except Exception as e:
+        print(e)
+        return
+
+    dirs, nondirs = [], []
+    for name in names:
+        if path.isdir(path.join(bottom, name)):
+            dirs.append(name)
+        else:
+            nondirs.append(name)
+
+    yield bottom, dirs, nondirs
+
+    new_path = path.realpath(path.join(bottom, '..'))
+
+    # see if we are at the top
+    if new_path == bottom:
+        return
+
+    yield from walk_up(new_path)
+
+def pullify():
+    from git.repo import Repo, fun
+    import subprocess
+    from git import Git
+    if Git().is_git_dir():
+        for x in walk_up(os.getcwd()):
+            print(f'git dir {x[0]}')
+            if '.git' in x[1]:
+                repo = Repo(x[0])
+                git = repo.git()
+                f = open(f'{repo.git_dir}/config').read()
+                if '+refs/pull/*/head:refs/remotes/origin/pr/*' not in f:
+                    git.config('--add', 'remote.origin.fetch', '+refs/pull/*/head:refs/remotes/origin/pr/*')
+                    for fetch in repo.remote().fetch():
+                        print(fetch)
+                break
+            else:
+                print(f'Cannot find a .git config directory')
+            print(f'repo = {repo} : git = {git}')
+    else:
+        print(f'{os.getcwd()} is not a git directory')
+
+from pathlib import Path
+
+Path('.')

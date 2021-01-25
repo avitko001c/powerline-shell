@@ -1,0 +1,29 @@
+import sys
+import logging
+import django
+from logging.config import dictConfig
+logging.basicConfig(format="%(levelname)-8s %(asctime)s %(name)s %(message)s", datefmt='%m/%d/%y %H:%M:%S', stream=sys.stdout )
+log = logging.getLogger("root")
+
+from django.apps  import apps
+from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+import django; print('Django %s' % django.get_version())
+sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])
+if 'setup' in dir(django): django.setup()
+import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)
+
+dictConfig(settings.LOGGING)
+log.debug("Logging has been initialized at DEBUG")
+log.setLevel( logging.DEBUG)
+log.disabled = False
+
+for _class in apps.get_models():
+    if _class.__name__.startswith("Historical"): continue
+    log.debug("Registering model {}".format(_class.__name__))
+    globals()[_class.__name__] = _class
+
+def debug_sql():
+    from debug_toolbar.management.commands import debugsqlshell
+    return
+
